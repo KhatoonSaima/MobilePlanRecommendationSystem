@@ -16,7 +16,7 @@ public class SupportTab extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
 
         // Title
-        JLabel titleLabel = new JLabel("Support For You 🚑", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Support For You", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         gbc.gridx = 0;
