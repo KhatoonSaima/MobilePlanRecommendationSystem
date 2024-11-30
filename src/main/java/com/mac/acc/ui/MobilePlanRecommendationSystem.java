@@ -1,3 +1,4 @@
+package com.mac.acc.ui;
 import javax.swing.*;
 
 public class MobilePlanRecommendationSystem {
