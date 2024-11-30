@@ -7,13 +7,12 @@ import java.io.FileNotFoundException;
 public class Features extends JPanel {
 
     public Features() {
-
         setLayout(new BorderLayout());
 
         // Dropdown for feature selection
-        JComboBox<String> featureDropdown = new JComboBox<>(
-                new String[]{"Word Completion", "Spell Checking", "Frequency Count", "Page Ranking"}
-        );
+        JComboBox<String> featureDropdown = new JComboBox<>(new String[]{
+                "Word Completion", "Spell Checking", "Frequency Count", "Page Ranking", "Search Bar Test"
+        });
 
         // Main content panel with CardLayout
         JPanel featureContentPanel = new JPanel(new CardLayout());
@@ -30,18 +29,22 @@ public class Features extends JPanel {
         // Page Ranking Panel
         JPanel pageRankingPanel = PageRankingUI.createPanel();
 
+        // Search Bar Panel
+        JPanel searchBarPanel = SearchBarUI.createPanel();
+
         // Add individual panels to the CardLayout panel
         featureContentPanel.add(wordCompletionPanel, "Word Completion");
         featureContentPanel.add(spellCheckingPanel, "Spell Checking");
-        featureContentPanel.add(pageRankingPanel, "Page Ranking");
         featureContentPanel.add(frequencyCountPanel, "Frequency Count");
+        featureContentPanel.add(pageRankingPanel, "Page Ranking");
+        featureContentPanel.add(searchBarPanel, "Search Bar Test");
 
         // Action Listener for Dropdown to switch panels
         featureDropdown.addActionListener(e -> {
             CardLayout cl = (CardLayout) (featureContentPanel.getLayout());
-            cl.show(featureContentPanel, (String) featureDropdown.getSelectedItem());
-
             String selectedOption = (String) featureDropdown.getSelectedItem();
+            cl.show(featureContentPanel, selectedOption); // Switch to the selected panel
+
             if ("Frequency Count".equals(selectedOption)) {
                 try {
                     FrequencyCountUI.displayWordFrequencies(frequencyCountPanel, 10); // Number of top frequent words to display
@@ -56,4 +59,3 @@ public class Features extends JPanel {
         add(featureContentPanel, BorderLayout.CENTER);
     }
 }
-
