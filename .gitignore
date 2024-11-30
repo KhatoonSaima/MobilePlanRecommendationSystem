@@ -1,3 +1,17 @@
+# Log files
+logs/
+*.log
+*.log.*
+
+# Downloaded web pages
+docs/*.html
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
