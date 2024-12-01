@@ -7,7 +7,7 @@ public class MobilePlanRecommendationSystem {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Mobile Plan Recommendation System");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
+            frame.setSize(1000, 800);
 
             // Tabbed Pane
             JTabbedPane tabbedPane = new JTabbedPane();
@@ -16,7 +16,7 @@ public class MobilePlanRecommendationSystem {
             tabbedPane.addTab("Home", new HomeTab());
 
             // Search Plan Tab
-            tabbedPane.addTab("Search Plan", new SearchPlanTab());
+            tabbedPane.addTab("Recommendation", new RecommendationTab());
 
             // Features Tab
             tabbedPane.addTab("Features", new Features());

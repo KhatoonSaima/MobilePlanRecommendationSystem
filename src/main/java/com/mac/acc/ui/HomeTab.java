@@ -15,6 +15,7 @@ public class HomeTab extends JPanel {
         JButton dataButton = new JButton("Data");
         JButton priceButton = new JButton("Price");
         JTextArea outputArea = new JTextArea(20, 30);
+
         outputArea.setLineWrap(true);
         outputArea.setWrapStyleWord(true);
         outputArea.setBorder(BorderFactory.createTitledBorder("Recommended Plan"));

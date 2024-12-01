@@ -28,7 +28,7 @@ public class SearchBarUI {
 
         JLabel resultLabel = new JLabel(" ");
         resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        resultLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 500, 0));
+        resultLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 700, 0));
         searchBarPanel.add(resultLabel);
 
         // Word completion logic as you type
