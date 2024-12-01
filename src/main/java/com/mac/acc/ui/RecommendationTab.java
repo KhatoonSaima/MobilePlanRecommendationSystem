@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 
 public class RecommendationTab extends JPanel {
 
-    private JLabel resultLabel;
 
     public RecommendationTab() {
         setLayout(new FlowLayout());
