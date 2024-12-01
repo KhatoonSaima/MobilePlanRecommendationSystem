@@ -15,6 +15,9 @@ public class MobilePlanRecommendationSystem {
             // Home Tab
             tabbedPane.addTab("Home", new HomeTab());
 
+            // Recommendation Tab
+            tabbedPane.addTab("Recommendation", new RecommendationTab());
+
             // Search Plan Tab
             tabbedPane.addTab("Search Plan", new SearchPlanTab());
 
@@ -23,6 +26,7 @@ public class MobilePlanRecommendationSystem {
 
             // Support Tab
             tabbedPane.addTab("Support", new SupportTab());
+
 
             // Add TabbedPane to Frame
             frame.add(tabbedPane);
