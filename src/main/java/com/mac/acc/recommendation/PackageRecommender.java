@@ -1,10 +1,11 @@
-package com.mac.acc.plan;
+package com.mac.acc.recommendation;
+
 import java.util.*;
 
 public class PackageRecommender {
-    private List<Package> packages;
+    private List<com.mac.acc.recommendation.Package> packages;
     private static final int TOP_K = 3;  // top 3 recommends
-    private Map<String, Package> packageMap;  //hash map for searching the package ,key is the plan name, value is the package info
+    private Map<String, com.mac.acc.recommendation.Package> packageMap;  //hash map for searching the package ,key is the plan name, value is the package info
 
     public PackageRecommender() {
         this.packages = new ArrayList<>();
@@ -12,21 +13,21 @@ public class PackageRecommender {
     }
 
     //put the data into the container
-    public void addPackage(Package pkg) {
+    public void addPackage(com.mac.acc.recommendation.Package pkg) {
         packages.add(pkg);
         packageMap.put(pkg.getName(), pkg);
     }
 
     //the main recommend algorithm
-    public List<Package> recommendTopK(double desiredData, double maxPrice, List<String> preferences) {
+    public List<com.mac.acc.recommendation.Package> recommendTopK(double desiredData, double maxPrice, List<String> preferences) {
         // pre-filter the data
-        List<Package> filteredPackages = preFilter(desiredData, maxPrice);
+        List<com.mac.acc.recommendation.Package> filteredPackages = preFilter(desiredData, maxPrice);
 
         ////use the priority queue maintain the top3 results,less space
         PriorityQueue<ScoredPackage> topPackages = new PriorityQueue<>(
                 TOP_K, Comparator.comparingDouble(ScoredPackage::getScore));
         //calculate the score of the filtered packages
-        for (Package pkg : filteredPackages) {
+        for (com.mac.acc.recommendation.Package pkg : filteredPackages) {
             double score = calculateScore(pkg, desiredData, maxPrice, preferences);
 
             if (topPackages.size() < TOP_K) {
@@ -37,7 +38,7 @@ public class PackageRecommender {
             }
         }
         //reverse the order
-        List<Package> result = new ArrayList<>(TOP_K);
+        List<com.mac.acc.recommendation.Package> result = new ArrayList<>(TOP_K);
         while (!topPackages.isEmpty()) {
             result.add(0, topPackages.poll().getPackage());
         }
@@ -45,7 +46,7 @@ public class PackageRecommender {
     }
 
     //pre-filter the data, decrease the number of packages that we need to calculate the scores
-    private List<Package> preFilter(double desiredData, double maxPrice) {
+    private List<com.mac.acc.recommendation.Package> preFilter(double desiredData, double maxPrice) {
         return packages.stream()
                 .filter(pkg -> pkg.getPrice() <= maxPrice)  // the price must smaller than the user's budget
                 .filter(pkg -> pkg.getDataLimit() >= desiredData * 0.5) //the data amount must exceed the half of the user's need
@@ -53,7 +54,7 @@ public class PackageRecommender {
                 .toList();
     }
     //the method of calculating the scores
-    private double calculateScore(Package pkg, double desiredData, double maxPrice, List<String> preferences) {
+    private double calculateScore(com.mac.acc.recommendation.Package pkg, double desiredData, double maxPrice, List<String> preferences) {
         double score = 0;
         // data amount matching
         double dataRatio = pkg.getDataLimit() / desiredData;  //if the data amount is bigger than 150%, it gets 5 points
@@ -77,7 +78,7 @@ public class PackageRecommender {
         return score;
     }
 
-        public Package getPackageByName(String name) {
+        public com.mac.acc.recommendation.Package getPackageByName(String name) {
             return packageMap.get(name);
         }
 

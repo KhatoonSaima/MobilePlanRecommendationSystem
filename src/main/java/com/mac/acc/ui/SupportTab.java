@@ -122,6 +122,15 @@ public class SupportTab extends JPanel {
             writer.write("----------------------------");
             writer.newLine();
         }
+        catch (IOException e) {
+            // Handle IOException (e.g., file write error)
+            System.err.println("Error occurred while writing to the file: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            // Catch any other unexpected exceptions
+            System.err.println("An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
 

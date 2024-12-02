@@ -1,11 +1,11 @@
-package com.mac.acc.plan;
+package com.mac.acc.recommendation;
 
 // 需要确保明确指定类型参数
 public class ScoredPackage implements Comparable<ScoredPackage> {
     private double score;
-    private Package pkg;
+    private com.mac.acc.recommendation.Package pkg;
 
-    public ScoredPackage(double score, Package pkg) {
+    public ScoredPackage(double score, com.mac.acc.recommendation.Package pkg) {
         this.score = score;
         this.pkg = pkg;
     }

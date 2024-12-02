@@ -1,4 +1,6 @@
-package com.mac.acc.ui;
+package com.mac.acc.features;
+
+import com.mac.acc.ui.LogEntry;
 
 import java.util.AbstractMap;
 import java.util.List;

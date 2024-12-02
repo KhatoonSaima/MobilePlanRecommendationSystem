@@ -1,4 +1,4 @@
-package com.mac.acc.plan;
+package com.mac.acc.recommendation;
 import java.util.List;
 //class of user's preferences, 3 main factors --data\price\other features
 public class UserPreferences {

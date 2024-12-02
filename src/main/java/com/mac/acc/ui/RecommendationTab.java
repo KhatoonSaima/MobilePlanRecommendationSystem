@@ -1,7 +1,7 @@
 package com.mac.acc.ui;
 
-import com.mac.acc.plan.Package;
-import com.mac.acc.plan.PackageRecommender;
+import com.mac.acc.recommendation.Package;
+import com.mac.acc.recommendation.PackageRecommender;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;

@@ -1,4 +1,4 @@
-package com.mac.acc.ui;
+package com.mac.acc.features;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;

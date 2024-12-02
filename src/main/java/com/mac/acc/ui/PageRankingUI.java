@@ -23,7 +23,7 @@ public class PageRankingUI {
         pageRankingPanel.add(pageRankingButton);
 
         // Output Area
-        JTextArea outputArea = new JTextArea(50, 60);
+        JTextArea outputArea = new JTextArea(20, 60);
         outputArea.setLineWrap(true);
         outputArea.setWrapStyleWord(true);
         outputArea.setBorder(BorderFactory.createTitledBorder("Page Ranking with Frequency Count: "));

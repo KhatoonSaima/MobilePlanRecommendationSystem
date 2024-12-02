@@ -1,4 +1,6 @@
 package com.mac.acc.ui;
+import com.mac.acc.datacomparison.DataComparison;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,7 +16,7 @@ public class HomeTab extends JPanel {
         JPanel buttonPanel = new JPanel();
         JButton dataButton = new JButton("Data");
         JButton priceButton = new JButton("Price");
-        JTextArea outputArea = new JTextArea(20, 30);
+        JTextArea outputArea = new JTextArea(30, 30);
 
         outputArea.setLineWrap(true);
         outputArea.setWrapStyleWord(true);
@@ -45,13 +47,11 @@ public class HomeTab extends JPanel {
 
     // Function to recommend best plan based on data
     private String getRecommendedPlanBasedOnData() {
-        // Code to get the best plan based on data
-        return "Recommended plan based on data usage...";
+        return DataComparison.comparePlansByData();
     }
 
     // Function to recommend best plan based on price
     private String getRecommendedPlanBasedOnPrice() {
-        // Code to get the best plan based on price
-        return "Recommended plan based on price...";
+        return DataComparison.comparePlansByCost();
     }
 }

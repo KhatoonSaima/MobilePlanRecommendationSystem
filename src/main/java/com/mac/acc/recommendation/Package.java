@@ -1,4 +1,4 @@
-package com.mac.acc.plan;
+package com.mac.acc.recommendation;
 
 import java.util.ArrayList;
 import java.util.List;
