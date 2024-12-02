@@ -18,7 +18,7 @@ public class MobilePlanRecommendationSystem {
             titlePanel.setBackground(new Color(50, 50, 50)); // Dark background for the title panel
 
             // Create a label for the title
-            JLabel titleLabel = new JLabel("Mobile Plan Recommendation System", SwingConstants.CENTER);
+            JLabel titleLabel = new JLabel("Mobile Plan Search & Recommendation System", SwingConstants.CENTER);
             titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
             titleLabel.setForeground(Color.WHITE);
 
