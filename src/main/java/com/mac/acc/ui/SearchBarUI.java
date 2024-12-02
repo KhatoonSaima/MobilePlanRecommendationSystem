@@ -36,7 +36,7 @@ public class SearchBarUI {
         // Result label panel
         JLabel resultLabel = new JLabel(" ");
         resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        resultLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));  // Adjust bottom padding
+        resultLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 350, 0));  // Adjust bottom padding
 
         // Add result label first
         searchBarPanel.add(resultLabel);
