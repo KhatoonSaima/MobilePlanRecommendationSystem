@@ -8,6 +8,9 @@ import java.util.*;
 /**
  * A class that implements SearchFrequencyQuery interface to track and analyze search queries
  * Uses a self-balancing tree (TreeMap) for frequency tracking and ArrayList for logging
+ *
+ * @author weiming zheng
+ * @since 2024-10-29
  */
 public class SimpleSearchFrequencyQuery implements SearchFrequencyQuery {
     // TreeMap (Red-Black tree) to store search queries (key) and their frequencies (value)

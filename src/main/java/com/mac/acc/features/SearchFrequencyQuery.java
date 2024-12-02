@@ -17,6 +17,9 @@ import java.util.List;
  *   <li>Retrieve the most frequently searched queries</li>
  *   <li>Log searches with timestamps for history tracking</li>
  * </ul>
+ *
+ * @author Weiming Zheng
+ * @since 2024-10-29
  */
 public interface SearchFrequencyQuery {
 

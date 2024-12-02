@@ -1,8 +1,6 @@
 package com.mac.acc.ui;
 
 import com.mac.acc.features.SearchBar;
-import com.mac.acc.features.SearchFrequencyQuery;
-import com.mac.acc.features.SimpleSearchFrequencyQuery;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +9,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class SearchBarUI {
-
-    private static SearchFrequencyQuery searchFrequencyQuery = SearchFrequencyQueryFactory.getSearchFrequencyQuery("simple");
 
     public static JPanel createPanel() {
 
@@ -194,11 +190,5 @@ public class SearchBarUI {
         // Refresh the frequency panel
         frequencyPanel.revalidate();
         frequencyPanel.repaint();
-    }
-
-    public static class SearchFrequencyQueryFactory {
-        public static SearchFrequencyQuery getSearchFrequencyQuery(String code) {
-            return new SimpleSearchFrequencyQuery();
-        }
     }
 }

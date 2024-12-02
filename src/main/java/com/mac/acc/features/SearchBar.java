@@ -1,6 +1,5 @@
 package com.mac.acc.features;
 
-import com.mac.acc.ui.SearchBarUI;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,7 +12,7 @@ import java.io.*;
 
 public class SearchBar {
 
-    private static final SearchFrequencyQuery frequencyTracker = new SearchBarUI.SearchFrequencyQueryFactory().getSearchFrequencyQuery("simple");
+    private static final SearchFrequencyQuery frequencyTracker = SearchFrequencyQueryFactory.getSearchFrequencyQuery("simple");
 
     // Word Completion Using Trie
     public static List<String> getWordCompletions(String input) {
