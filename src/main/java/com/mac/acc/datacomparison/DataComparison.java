@@ -75,10 +75,10 @@ public class DataComparison {
     //Comparing Plans by plancost
     public static String comparePlansByCost(){
 
-		String planDetail1 = "";
-		String planDetail2 = "";
-		String planDetail3 = "";
-		String planDetail4 = "";
+		String planProvider = "";
+		String planName = "";
+		String planCost = "";
+		String planURL = "";
 
 		try {
 			//Read all the plans
@@ -96,10 +96,22 @@ public class DataComparison {
 			MobilePlans plan2 = sortedPlans.get(1);
 			MobilePlans plan3 = sortedPlans.get(2);
 			MobilePlans plan4 = sortedPlans.get(3);
-			planDetail1 = "Plan Provider :" + plan1.provider + "\n" + "Plan Name: " + plan1.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan1.plan.get("Plan Cost") + "\n" + "URL: " + plan1.link;
-			planDetail2 = "Plan Provider :" + plan2.provider + "\n" + "Plan Name: " + plan2.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan2.plan.get("Plan Cost") + "\n" + "URL: " + plan2.link;
-			planDetail3 = "Plan Provider :" + plan3.provider + "\n" + "Plan Name: " + plan3.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan3.plan.get("Plan Cost") + "\n" + "URL: " + plan3.link;
-			planDetail4 = "Plan Provider :" + plan4.provider + "\n" + "Plan Name: " + plan4.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan4.plan.get("Plan Cost") + "\n" + "URL: " + plan4.link;
+			planProvider = "<b>Plan Provider:</b> " + plan1.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan1.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan1.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan1.link + "'>" + plan1.link + "</a>";
+			planName = "<b>Plan Provider:</b> " + plan2.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan2.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan2.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan2.link + "'>" + plan2.link + "</a>";
+			planCost = "<b>Plan Provider:</b> " + plan3.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan3.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan3.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan3.link + "'>" + plan3.link + "</a>";
+			planURL = "<b>Plan Provider:</b> " + plan4.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan4.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan4.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan4.link + "'>" + plan4.link + "</a>";
 		}
 		catch(IndexOutOfBoundsException e) {
 			System.out.println(e.getMessage());
@@ -108,16 +120,21 @@ public class DataComparison {
 			e.printStackTrace();
 		}
 
-        return planDetail1+"\n\n"+planDetail2 +"\n\n"+planDetail3 +"\n\n"+planDetail4;
+		return "<html>" +
+				planProvider + "<br><br>" +
+				planName + "<br><br>" +
+				planCost + "<br><br>" +
+				planURL +
+				"</html>";
     }
     
     //Comparing Plans by plandata
     public static String comparePlansByData(){
 
-		String planDetail1 = "";
-		String planDetail2 = "";
-		String planDetail3 = "";
-		String planDetail4 = "";
+		String planProvider = "";
+		String planName = "";
+		String planCost = "";
+		String planURL = "";
 
 		try {
 			//Read all the plans
@@ -138,10 +155,22 @@ public class DataComparison {
 			MobilePlans plan2 = sortedPlans.get(1);
 			MobilePlans plan3 = sortedPlans.get(2);
 			MobilePlans plan4 = sortedPlans.get(3);
-			 planDetail1 = "Plan Provider :" + plan1.provider + "\n" + "Plan Name: " + plan1.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan1.plan.get("Plan Cost") + "\n" + "URL: " + plan1.link;
-			 planDetail2 = "Plan Provider :" + plan2.provider + "\n" + "Plan Name: " + plan2.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan2.plan.get("Plan Cost") + "\n" + "URL: " + plan2.link;
-			 planDetail3 = "Plan Provider :" + plan3.provider + "\n" + "Plan Name: " + plan3.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan3.plan.get("Plan Cost") + "\n" + "URL: " + plan3.link;
-			 planDetail4 = "Plan Provider :" + plan4.provider + "\n" + "Plan Name: " + plan4.plan.get("Plan Name") + "\n" + "Plan Cost: " + plan4.plan.get("Plan Cost") + "\n" + "URL: " + plan4.link;
+			planProvider = "<b>Plan Provider:</b> " + plan1.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan1.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan1.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan1.link + "'>" + plan1.link + "</a>";
+			planName = "<b>Plan Provider:</b> " + plan2.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan2.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan2.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan2.link + "'>" + plan2.link + "</a>";
+			planCost = "<b>Plan Provider:</b> " + plan3.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan3.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan3.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan3.link + "'>" + plan3.link + "</a>";
+			planURL = "<b>Plan Provider:</b> " + plan4.provider + "<br>" +
+					"<b>Plan Name:</b> " + plan4.plan.get("Plan Name") + "<br>" +
+					"<b>Plan Cost:</b> " + plan4.plan.get("Plan Cost") + "<br>" +
+					"<b>URL:</b> <a href='" + plan4.link + "'>" + plan4.link + "</a>";
 		}
 		catch (IndexOutOfBoundsException e) {
 			System.out.println(e.getMessage());
@@ -149,7 +178,13 @@ public class DataComparison {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-    	return planDetail1+"\n\n"+planDetail2 +"\n\n"+planDetail3 +"\n\n"+planDetail4;
+
+		return "<html>" +
+				planProvider + "<br><br>" +
+				planName + "<br><br>" +
+				planCost + "<br><br>" +
+				planURL +
+				"</html>";
     }
     
     public static void main(String args[]) {
