@@ -18,9 +18,6 @@ public class MobilePlanRecommendationSystem {
             // Recommendation Tab
             tabbedPane.addTab("Recommendation", new RecommendationTab());
 
-            // Search Plan Tab
-            tabbedPane.addTab("Recommendation", new RecommendationTab());
-
             // Features Tab
             tabbedPane.addTab("Features", new Features());
 
