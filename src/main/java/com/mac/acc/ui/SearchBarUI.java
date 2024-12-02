@@ -15,6 +15,20 @@ public class SearchBarUI {
     private static SearchFrequencyQuery searchFrequencyQuery = SearchFrequencyQueryFactory.getSearchFrequencyQuery("simple");
 
     public static JPanel createPanel() {
+
+        // Create a panel with GridLayout (2 rows, 1 column)
+        JPanel panel = new JPanel(new GridLayout(2, 1)); // Divides the panel into 2 halves
+
+        // Top half
+        JPanel topPanel = new JPanel();
+        // Bottom half
+        JPanel bottomPanel = new JPanel();
+
+        // Add the panels to the GridLayout
+        panel.add(topPanel);
+        panel.add(bottomPanel);
+
+        // Create main search bar panel with vertical layout
         JPanel searchBarPanel = new JPanel();
         searchBarPanel.setLayout(new BoxLayout(searchBarPanel, BoxLayout.Y_AXIS));
 
@@ -36,10 +50,10 @@ public class SearchBarUI {
         // Result label panel
         JLabel resultLabel = new JLabel(" ");
         resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        resultLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 350, 0));  // Adjust bottom padding
 
         // Add result label first
         searchBarPanel.add(resultLabel);
+        topPanel.add(searchBarPanel);
 
         // Create frequency panel with JScrollPane for the frequency list
         JPanel frequencyPanelContainer = new JPanel();
@@ -52,28 +66,35 @@ public class SearchBarUI {
 
         JScrollPane frequencyScrollPane = new JScrollPane(frequencyPanel);
         frequencyScrollPane.getViewport().setBackground(Color.WHITE);
-        frequencyScrollPane.setPreferredSize(new Dimension(350, 200));  // Set a preferred size for the frequency box
+        frequencyScrollPane.setPreferredSize(new Dimension(600, 200));  // Set a preferred size for the frequency box
         frequencyPanelContainer.add(frequencyScrollPane);
 
-        searchBarPanel.add(frequencyPanelContainer);  // Add the frequency panel container below the result label
+        bottomPanel.add(frequencyPanelContainer);  // Add the frequency panel container below the result label
 
         // Word completion logic as you type
         searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                suggestionsPanel.setVisible(false);
+               resultLabel.setVisible(false);
                 showCompletionSuggestions(searchField, suggestionsPanel);
             }
 
             @Override
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                suggestionsPanel.setVisible(false);
+                resultLabel.setVisible(false);
                 showCompletionSuggestions(searchField, suggestionsPanel);
             }
 
             @Override
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                suggestionsPanel.setVisible(false);
+               resultLabel.setVisible(false);
                 showCompletionSuggestions(searchField, suggestionsPanel);
             }
         });
+
 
         // Action when "Search" button is clicked or Enter key is pressed
         searchButton.addActionListener(e -> performSearch(searchField, resultLabel, suggestionsPanel, frequencyPanel));
@@ -81,12 +102,14 @@ public class SearchBarUI {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    suggestionsPanel.setVisible(true);
+                    resultLabel.setVisible(true);
                     performSearch(searchField, resultLabel, suggestionsPanel, frequencyPanel);
                 }
             }
         });
 
-        return searchBarPanel;
+        return panel;
     }
 
     private static void showCompletionSuggestions(JTextField searchField, JPanel suggestionsPanel) {
@@ -101,16 +124,14 @@ public class SearchBarUI {
             if (!completions.isEmpty()) {
                 // Limit to the closest 3 matches
                 completions.stream().limit(3).forEach(word -> {
-                    JLabel suggestionLabel = new JLabel(word);
-                    suggestionLabel.setForeground(Color.BLUE);
-                    suggestionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    suggestionLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-                        public void mouseClicked(java.awt.event.MouseEvent e) {
-                            searchField.setText(word); // Set the word on click
-                            suggestionsPanel.setVisible(false); // Hide suggestions
-                        }
+                    JButton suggestionButton = new JButton(word);
+                    suggestionButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    suggestionButton.addActionListener(e -> {
+                        searchField.setText(word);  // Set selected suggestion in search field
+                        suggestionsPanel.setVisible(false); // Hide suggestions after selection
                     });
-                    suggestionsPanel.add(suggestionLabel);
+
+                    suggestionsPanel.add(suggestionButton);
                 });
                 suggestionsPanel.setVisible(true);
             } else {
@@ -128,8 +149,10 @@ public class SearchBarUI {
     private static void performSearch(JTextField searchField, JLabel resultLabel, JPanel suggestionsPanel, JPanel frequencyPanel) {
         String input = searchField.getText().trim().toLowerCase();
 
+        suggestionsPanel.setVisible(true);
+        resultLabel.setVisible(true);
+
         // Clear suggestions when search is performed
-        suggestionsPanel.setVisible(false);
         suggestionsPanel.removeAll();
         suggestionsPanel.revalidate();
         suggestionsPanel.repaint();
