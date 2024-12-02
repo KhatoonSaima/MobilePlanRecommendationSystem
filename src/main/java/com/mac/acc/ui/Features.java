@@ -10,7 +10,7 @@ public class Features extends JPanel {
 
         // Dropdown for feature selection
         JComboBox<String> featureDropdown = new JComboBox<>(new String[]{
-                "Page Ranking", "Search Bar"
+                "Search Pages", "Search Bar"
         });
 
         // Main content panel with CardLayout
