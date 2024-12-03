@@ -23,7 +23,7 @@ public class Features extends JPanel {
         JPanel searchBarPanel = SearchBarUI.createPanel();
 
         // Add individual panels to the CardLayout panel
-        featureContentPanel.add(pageRankingPanel, "Page Ranking");
+        featureContentPanel.add(pageRankingPanel, "Search Pages");
         featureContentPanel.add(searchBarPanel, "Search Bar");
 
         // Action Listener for Dropdown to switch panels
