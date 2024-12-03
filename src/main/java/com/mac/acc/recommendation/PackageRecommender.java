@@ -50,20 +50,25 @@ public class PackageRecommender {
         return packages.stream()
                 .filter(pkg -> pkg.getPrice() <= maxPrice)  // the price must smaller than the user's budget
                 .filter(pkg -> pkg.getDataLimit() >= desiredData * 0.5) //the data amount must exceed the half of the user's need
-                .filter(pkg -> pkg.getDataLimit() <= desiredData * 2)  //the data amount must not exceed the twice of the user's need
                 .toList();
     }
     //the method of calculating the scores
     private double calculateScore(com.mac.acc.recommendation.Package pkg, double desiredData, double maxPrice, List<String> preferences) {
         double score = 0;
+
         // data amount matching
-        double dataRatio = pkg.getDataLimit() / desiredData;  //if the data amount is bigger than 150%, it gets 5 points
-        if (dataRatio > 1.5) {
-            score += 5;
-        } else if (dataRatio >= 0.8 && dataRatio <= 1.5) {  //if the data amount is around 80%-150%, it gets 4 points
-            score += 4;
-        } else if (dataRatio >= 0.5 && dataRatio < 0.8) {   //if the data amount is smaller than 80%, it gets 2 points
-            score += 2;
+        if (Double.isInfinite(pkg.getDataLimit())) {
+            score += 6;  //rate the unlimited packages highest score
+        } else {
+            double dataRatio = pkg.getDataLimit() / desiredData;//if the data amount is bigger than 150%, it gets 5 points
+
+            if (dataRatio > 1.5) {
+                score += 5;
+            } else if (dataRatio >= 0.8 && dataRatio <= 1.5) {  //if the data amount is around 80%-150%, it gets 4 points
+                score += 4;
+            } else if (dataRatio >= 0.5 && dataRatio < 0.8) {  //if the data amount is smaller than 80%, it gets 2 points
+                score += 2;
+            }
         }
 
         //price matching
@@ -82,7 +87,7 @@ public class PackageRecommender {
             return packageMap.get(name);
         }
 
-    // 添加此方法来打印所有套餐信息
+    // print all the packages
     public void printAllPackages() {
         if (packages.isEmpty()) {
             System.out.println("Didn't load anything！");

@@ -223,9 +223,9 @@ public class RecommendationTab extends JPanel {
     }
     //dealing with the data info
     private double parseData(String data) {
-        if (data == null || data.isEmpty() || data.toLowerCase().contains("no data")) {
+        if (data == null || data.isEmpty() || (data.toLowerCase().contains("no data") && !data.equals("Unlimited"))) {
             return 0.0;
-        }else if (data == "Unlimited"){
+        }else if (data.equals("Unlimited")){
             return Double.POSITIVE_INFINITY;
         }
 
@@ -296,9 +296,15 @@ public class RecommendationTab extends JPanel {
 
     // validate the input
     private boolean validateInput(double budget, double data, String features) {
-        if (budget <= 0 || data <= 0) {
+        if (budget <= 0) {
             JOptionPane.showMessageDialog(this,
-                    "Budget and data amount must be positive numbers",
+                    "Budget must be positive numbers",
+                    "Input Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }else if(data < 0){
+            JOptionPane.showMessageDialog(this,
+                    "Data must be zero or positive numbers",
                     "Input Error",
                     JOptionPane.ERROR_MESSAGE);
             return false;
