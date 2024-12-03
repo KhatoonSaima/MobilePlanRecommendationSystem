@@ -1,7 +1,6 @@
-package com.mac.acc.search;
+package com.mac.acc.search.engine;
 
-import com.mac.acc.search.engine.MobileDataPlanSearchEngine;
-import com.mac.acc.search.engine.SearchEngine;
+import com.mac.acc.search.Document;
 
 import java.util.List;
 

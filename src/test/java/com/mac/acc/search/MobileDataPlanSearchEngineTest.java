@@ -2,6 +2,7 @@ package com.mac.acc.search;
 
 import com.mac.acc.search.engine.FieldCondition;
 import com.mac.acc.search.engine.SearchEngine;
+import com.mac.acc.search.engine.SearchEngineFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,18 +1,11 @@
 package com.mac.acc.ui;
-import com.mac.acc.search.Document;
 import com.mac.acc.search.Field;
-import com.mac.acc.search.SearchEngineFactory;
+import com.mac.acc.search.SearchEngineSingleton;
 import com.mac.acc.search.engine.FieldCondition;
 import com.mac.acc.search.engine.SearchEngine;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -125,29 +118,10 @@ public class PageRankingUI {
         label.setFont(label.getFont().deriveFont(Font.BOLD));
         panel.add(label, gbc);
     }
+
     private static String performRanking(List<Field> fields) {
-        List<Document> testDocuments = new ArrayList<>();
-
-        try (InputStream is = PageRankingUI.class.getClassLoader().getResourceAsStream("URLs.txt");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-
-            String url;
-            int index = 1;
-            while ((url = reader.readLine()) != null) {
-                if (!url.trim().isEmpty()) {
-                    testDocuments.add(new Document(
-                            Path.of("docs/" + index + ".html"),
-                            url.trim()
-                    ));
-                    index++;
-                }
-            }
-
-            if (testDocuments.isEmpty()) {
-                return "No URLs found in configuration file";
-            }
-
-            SearchEngine searchEngine = SearchEngineFactory.getSearchEngine(testDocuments);
+        try {
+            SearchEngine searchEngine = SearchEngineSingleton.getInstance();
             List<Map.Entry<String, Integer>> results = searchEngine.search(fields);
 
             StringBuilder resultMessage = new StringBuilder();
@@ -159,9 +133,8 @@ public class PageRankingUI {
             }
 
             return resultMessage.toString();
-
-        } catch (IOException e) {
-            return "Error reading URLs configuration: " + e.getMessage();
+        } catch (Exception e) {
+            return "Error performing ranking: " + e.getMessage();
         }
     }
 }
