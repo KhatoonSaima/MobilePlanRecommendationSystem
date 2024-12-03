@@ -73,6 +73,7 @@ public class InvertedIndex implements Trie {
         }
 
         log.debug("Found frequency vector for word '{}'", word);
+        if (freqCnts.get(u) == null) return new ArrayList<>(Collections.nCopies(n, 0));
         return freqCnts.get(u);
     }
 }
