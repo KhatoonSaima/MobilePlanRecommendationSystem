@@ -95,7 +95,7 @@ public class WordCompletion{
         WordCompletion trie = new WordCompletion();
 
         //vocabulary
-        String csvFile = "fido.csv";
+        String csvFile = "src/main/resources/mobile_plans.csv";
         String line;
         String delimiter = ",";
 

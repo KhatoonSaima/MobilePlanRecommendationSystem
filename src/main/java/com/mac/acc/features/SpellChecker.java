@@ -115,7 +115,7 @@ public class SpellChecker {
             Trie dictionary = new Trie();
 
             // load vocab into the trie from files
-            String filename = "phoneplans.csv";
+            String filename = "src/main/resources/mobile_plans.csv";
 
             // try catch just to make sure the file exists or is reachable
             try {

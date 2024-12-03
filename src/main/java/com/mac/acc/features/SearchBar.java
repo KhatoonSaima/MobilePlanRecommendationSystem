@@ -1,6 +1,5 @@
 package com.mac.acc.features;
 
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,7 +17,7 @@ public class SearchBar {
     public static List<String> getWordCompletions(String input) {
         WordCompletion trie = new WordCompletion(); // Assume WordCompletion is your Trie class for completions
 
-        String csvFile = "fido.csv"; // Replace with your actual file path
+        String csvFile = "src/main/resources/mobile_plans.csv"; // Replace with your actual file path
         String line;
         String delimiter = ",";
 
@@ -46,7 +45,7 @@ public class SearchBar {
         List<String> corrections = new ArrayList<>();
         SpellChecker.Trie dictionary = new SpellChecker.Trie(); // Assume SpellChecker.Trie is your Trie class for corrections
 
-        String filename = "phoneplans.csv"; // Replace with your actual file path
+        String filename = "src/main/resources/mobile_plans.csv"; // Replace with your actual file path
 
         try {
             Scanner csvScan = new Scanner(new File(filename));
