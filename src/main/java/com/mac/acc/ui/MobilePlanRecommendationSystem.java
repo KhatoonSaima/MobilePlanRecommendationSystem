@@ -49,7 +49,7 @@ public class MobilePlanRecommendationSystem {
             // Support Tab
             tabbedPane.addTab("Support", new SupportTab());
 
-            // Customize the tabbed pane UI (optional) to make it look cleaner
+            // Customize the tabbed pane UI to make it look cleaner
             tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
                 @Override
                 protected void installDefaults() {

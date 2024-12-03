@@ -83,6 +83,9 @@ public class SupportTab extends JPanel {
                     // Write to file complaints.txt
                     writeToFile(email, mobile, complaint);
                     JOptionPane.showMessageDialog(null, "Your complaint has been submitted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    emailField.setText("");
+                    mobileField.setText("");
+                    complaintArea.setText("");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null, "Error writing to file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -125,11 +128,9 @@ public class SupportTab extends JPanel {
         catch (IOException e) {
             // Handle IOException (e.g., file write error)
             System.err.println("Error occurred while writing to the file: " + e.getMessage());
-            e.printStackTrace();
         } catch (Exception e) {
             // Catch any other unexpected exceptions
             System.err.println("An unexpected error occurred: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
