@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PackageRecommender.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.recommendation</a> &gt; <span class="el_source">PackageRecommender.java</span></div><h1>PackageRecommender.java</h1><pre class="source lang-java linenums">package com.mac.acc.recommendation;
+
+import java.util.*;
+
+public class PackageRecommender {
+    private List&lt;com.mac.acc.recommendation.Package&gt; packages;
+    private static final int TOP_K = 3;  // top 3 recommends
+    private Map&lt;String, com.mac.acc.recommendation.Package&gt; packageMap;  //hash map for searching the package ,key is the plan name, value is the package info
+
+<span class="fc" id="L10">    public PackageRecommender() {</span>
+<span class="fc" id="L11">        this.packages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L12">        this.packageMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L13">    }</span>
+
+    //put the data into the container
+    public void addPackage(com.mac.acc.recommendation.Package pkg) {
+<span class="fc" id="L17">        packages.add(pkg);</span>
+<span class="fc" id="L18">        packageMap.put(pkg.getName(), pkg);</span>
+<span class="fc" id="L19">    }</span>
+
+    //the main recommend algorithm
+    public List&lt;com.mac.acc.recommendation.Package&gt; recommendTopK(double desiredData, double maxPrice, List&lt;String&gt; preferences) {
+        // pre-filter the data
+<span class="fc" id="L24">        List&lt;com.mac.acc.recommendation.Package&gt; filteredPackages = preFilter(desiredData, maxPrice);</span>
+
+        ////use the priority queue maintain the top3 results,less space
+<span class="fc" id="L27">        PriorityQueue&lt;ScoredPackage&gt; topPackages = new PriorityQueue&lt;&gt;(</span>
+<span class="fc" id="L28">                TOP_K, Comparator.comparingDouble(ScoredPackage::getScore));</span>
+        //calculate the score of the filtered packages
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        for (com.mac.acc.recommendation.Package pkg : filteredPackages) {</span>
+<span class="fc" id="L31">            double score = calculateScore(pkg, desiredData, maxPrice, preferences);</span>
+
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">            if (topPackages.size() &lt; TOP_K) {</span>
+<span class="fc" id="L34">                topPackages.offer(new ScoredPackage(score, pkg));</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">            } else if (score &gt; topPackages.peek().getScore()) {</span>
+<span class="nc" id="L36">                topPackages.poll(); // remove the one with the lowest score</span>
+<span class="nc" id="L37">                topPackages.offer(new ScoredPackage(score, pkg));</span>
+            }
+<span class="fc" id="L39">        }</span>
+        //reverse the order
+<span class="fc" id="L41">        List&lt;com.mac.acc.recommendation.Package&gt; result = new ArrayList&lt;&gt;(TOP_K);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        while (!topPackages.isEmpty()) {</span>
+<span class="fc" id="L43">            result.add(0, topPackages.poll().getPackage());</span>
+        }
+<span class="fc" id="L45">        return result;</span>
+    }
+
+    //pre-filter the data, decrease the number of packages that we need to calculate the scores
+    private List&lt;com.mac.acc.recommendation.Package&gt; preFilter(double desiredData, double maxPrice) {
+<span class="fc" id="L50">        return packages.stream()</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">                .filter(pkg -&gt; pkg.getPrice() &lt;= maxPrice)  // the price must smaller than the user's budget</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                .filter(pkg -&gt; pkg.getDataLimit() &gt;= desiredData * 0.5) //the data amount must exceed the half of the user's need</span>
+<span class="fc" id="L53">                .toList();</span>
+    }
+    //the method of calculating the scores
+    private double calculateScore(com.mac.acc.recommendation.Package pkg, double desiredData, double maxPrice, List&lt;String&gt; preferences) {
+<span class="fc" id="L57">        double score = 0;</span>
+
+        // data amount matching
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (Double.isInfinite(pkg.getDataLimit())) {</span>
+<span class="fc" id="L61">            score += 6;  //rate the unlimited packages highest score</span>
+        } else {
+<span class="fc" id="L63">            double dataRatio = pkg.getDataLimit() / desiredData;//if the data amount is bigger than 150%, it gets 5 points</span>
+
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            if (dataRatio &gt; 1.5) {</span>
+<span class="nc" id="L66">                score += 5;</span>
+<span class="pc bpc" id="L67" title="1 of 4 branches missed.">            } else if (dataRatio &gt;= 0.8 &amp;&amp; dataRatio &lt;= 1.5) {  //if the data amount is around 80%-150%, it gets 4 points</span>
+<span class="fc" id="L68">                score += 4;</span>
+<span class="pc bpc" id="L69" title="2 of 4 branches missed.">            } else if (dataRatio &gt;= 0.5 &amp;&amp; dataRatio &lt; 0.8) {  //if the data amount is smaller than 80%, it gets 2 points</span>
+<span class="fc" id="L70">                score += 2;</span>
+            }
+        }
+
+        //price matching
+<span class="fc" id="L75">        score += (1 - pkg.getPrice() / maxPrice) * 3;</span>
+
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (preferences != null) {</span>
+<span class="fc" id="L78">            score += preferences.stream()</span>
+<span class="fc" id="L79">                    .filter(pref -&gt; pkg.getFeatures().contains(pref)) // if it meets more features user want,then it get more points, 2 points for each</span>
+<span class="fc" id="L80">                    .count() * 2;</span>
+        }
+
+<span class="fc" id="L83">        return score;</span>
+    }
+
+        public com.mac.acc.recommendation.Package getPackageByName(String name) {
+<span class="fc" id="L87">            return packageMap.get(name);</span>
+        }
+
+    // print all the packages
+    public void printAllPackages() {
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (packages.isEmpty()) {</span>
+<span class="nc" id="L93">            System.out.println(&quot;Didn't load anything！&quot;);</span>
+<span class="nc" id="L94">            return;</span>
+        }
+
+<span class="fc" id="L97">        System.out.println(&quot;Print the information of all plans：&quot;);</span>
+<span class="fc" id="L98">        System.out.println(&quot;top to &quot; + packages.size() + &quot; plans&quot;);</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (Package pkg : packages) {</span>
+<span class="fc" id="L100">            System.out.println(&quot;\nBrand: &quot; + pkg.getBrand());</span>
+<span class="fc" id="L101">            System.out.println(&quot;Plan name: &quot; + pkg.getName());</span>
+<span class="fc" id="L102">            System.out.println(&quot;Data amount: &quot; + pkg.getDataLimit() + &quot;GB&quot;);</span>
+<span class="fc" id="L103">            System.out.println(&quot;Price: $&quot; + pkg.getPrice());</span>
+<span class="fc" id="L104">            System.out.println(&quot;Features: &quot; + String.join(&quot;, &quot;, pkg.getFeatures()));</span>
+<span class="fc" id="L105">            System.out.println(&quot;------------------------&quot;);</span>
+<span class="fc" id="L106">        }</span>
+<span class="fc" id="L107">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

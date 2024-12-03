@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpellChecker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.features</a> &gt; <span class="el_source">SpellChecker.java</span></div><h1>SpellChecker.java</h1><pre class="source lang-java linenums">package com.mac.acc.features;
+import java.io.*;
+import java.util.*;
+
+
+<span class="nc" id="L6">public class SpellChecker {</span>
+
+        // class to represent each node in the trie
+<span class="fc" id="L9">        static class TrieNode {</span>
+<span class="fc" id="L10">            TrieNode[] children = new TrieNode[26]; // we have 26 children nodes to hold all letters (a-z) in the alphabet</span>
+<span class="fc" id="L11">            boolean isEndofWord = false; // when true this will mark the end of the current word</span>
+        }
+
+        // class to manage the Trie structure, handles insertion and search
+        static class Trie {
+            private TrieNode root; // this is the root node of the trie this is always empty
+
+            // constructor for the root node
+<span class="fc" id="L19">            public Trie() {</span>
+<span class="fc" id="L20">                root = new TrieNode(); // initializes the root node of the trie</span>
+<span class="fc" id="L21">            }</span>
+
+            // method selects a word and inserts it into the trie, one character at a time
+            public void insertWord(String word) {
+<span class="fc" id="L25">                TrieNode currNode = root;</span>
+                // use .toCharArray to turn word to an array of characters
+<span class="fc bfc" id="L27" title="All 2 branches covered.">                for (char c : word.toCharArray()) {</span>
+<span class="pc bpc" id="L28" title="1 of 4 branches missed.">                    if (c &lt; 'a' || c &gt; 'z') continue; // skip any characters that are not in the range a-z</span>
+<span class="fc" id="L29">                    int index = c - 'a'; //using -'a' converts char to index (0-25)</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                    if (currNode.children[index] == null) {</span>
+<span class="fc" id="L31">                        currNode.children[index] = new TrieNode();</span>
+                    }
+<span class="fc" id="L33">                    currNode = currNode.children[index];</span>
+                }
+<span class="fc" id="L35">                currNode.isEndofWord = true; // this signifies the end of the word</span>
+<span class="fc" id="L36">            }</span>
+
+            // this method crosschecks if a word already exists in the trie or not
+            public boolean searchWord(String word) {
+<span class="fc" id="L40">                TrieNode currNode = root;</span>
+                // use .toCharArray to turn word to an array of characters
+<span class="fc bfc" id="L42" title="All 2 branches covered.">                for (char c : word.toCharArray()) {</span>
+<span class="pc bpc" id="L43" title="2 of 4 branches missed.">                    if (c &lt; 'a' || c &gt; 'z') {</span>
+<span class="nc" id="L44">                        continue; // skip any characters that are not in the range a-z</span>
+                    }
+<span class="fc" id="L46">                    int index = c - 'a'; // using -'a' converts char to index (0-25)</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                    if (currNode.children[index] == null) {</span>
+<span class="fc" id="L48">                        return false;</span>
+                    }
+<span class="fc" id="L50">                    currNode = currNode.children[index];</span>
+                }
+<span class="fc" id="L52">                return currNode.isEndofWord; // check if this is the end of the word</span>
+            }
+
+            // method used to calculate the editDistance
+            public static int computeEditDistance(String wordOne, String wordTwo) {
+<span class="fc" id="L57">                int wordOneLen = wordOne.length(); // first word len</span>
+<span class="fc" id="L58">                int wordTwolen = wordTwo.length(); // secornd word len</span>
+<span class="fc" id="L59">                int[][] dp = new int[wordOneLen + 1][wordTwolen + 1]; // 2d array used for dynamic programming</span>
+
+                // fill the 2D array
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                for (int i = 0; i &lt;= wordOneLen; i++) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                    for (int j = 0; j &lt;= wordTwolen; j++) {</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                        if (i == 0) {</span>
+<span class="fc" id="L65">                            dp[i][j] = j; // If word one is empty</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                        } else if (j == 0) {</span>
+<span class="fc" id="L67">                            dp[i][j] = i; // If word two is empty</span>
+                        } else {
+                            // Calculate minimum cost for insertion, deletion, or substitution
+<span class="fc" id="L70">                            dp[i][j] = Math.min(dp[i - 1][j] + 1, // Deletion</span>
+<span class="fc" id="L71">                                    Math.min(dp[i][j - 1] + 1, // Insertion</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                                            dp[i - 1][j - 1] + (wordOne.charAt(i - 1) == wordTwo.charAt(j - 1) ? 0 : 1))); // Substitution</span>
+                        }
+                    }
+                }
+<span class="fc" id="L76">                return dp[wordOneLen][wordTwolen]; // returns the edit distance</span>
+            }
+
+             //this method suggest similar words based on edit distance
+             public static List&lt;String&gt; suggestSimilarWords(Trie dictionary, String word, int maxSuggestions) {
+<span class="fc" id="L81">                 PriorityQueue&lt;Map.Entry&lt;String, Integer&gt;&gt; suggestions = new PriorityQueue&lt;&gt;(</span>
+<span class="fc" id="L82">                         Comparator.comparingInt(Map.Entry::getValue) // Sort by edit distance</span>
+                 );
+<span class="fc" id="L84">                 suggestSimilarWordsHelper(dictionary.root, &quot;&quot;, suggestions, word);</span>
+
+                 // Extract top suggestions
+<span class="fc" id="L87">                 List&lt;String&gt; altWords = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L88" title="1 of 4 branches missed.">                 while (!suggestions.isEmpty() &amp;&amp; altWords.size() &lt; maxSuggestions) {</span>
+<span class="fc" id="L89">                     altWords.add(suggestions.poll().getKey());</span>
+                 }
+<span class="fc" id="L91">                 return altWords;</span>
+             }
+
+            //this is a helper functyion that will generate suggestions using trie (recursive depth first search approach)
+            private static void suggestSimilarWordsHelper(TrieNode node, String currentWord, PriorityQueue&lt;Map.Entry&lt;String, Integer&gt;&gt; suggestions, String targetWord) {
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                if (node == null) return;  // Stop if no node exists</span>
+
+                // If the current word is complete, compute edit distance
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                if (node.isEndofWord) {</span>
+<span class="fc" id="L100">                    int wordEditDistance = computeEditDistance(currentWord, targetWord);</span>
+<span class="fc" id="L101">                    suggestions.add(Map.entry(currentWord, wordEditDistance)); // Add word with its edit distance</span>
+                }
+
+                // Continue DFS traversal for all child nodes
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                for (char c = 'a'; c &lt;= 'z'; c++) {</span>
+<span class="fc" id="L106">                    TrieNode nextNode = node.children[c - 'a'];</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                    if (nextNode != null) {</span>
+<span class="fc" id="L108">                        suggestSimilarWordsHelper(nextNode, currentWord + c, suggestions, targetWord);</span>
+                    }
+                }
+<span class="fc" id="L111">            }</span>
+
+        public static void main(String[] args) {
+            // create a new instance of trie
+<span class="nc" id="L115">            Trie dictionary = new Trie();</span>
+
+            // load vocab into the trie from files
+<span class="nc" id="L118">            String filename = &quot;src/main/resources/mobile_plans.csv&quot;;</span>
+
+            // try catch just to make sure the file exists or is reachable
+            try {
+<span class="nc" id="L122">                Scanner csvScan = new Scanner(new File(filename));</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                while (csvScan.hasNextLine()) {</span>
+<span class="nc" id="L124">                    String currLine = csvScan.nextLine();</span>
+<span class="nc" id="L125">                    String[] wordsInString = currLine.split(&quot;[^\\w.]+|(?&lt;!\\w)\\.|\\.(?!\\w)&quot;, 0);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                    for (String word : wordsInString) {</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                        if (!word.trim().isEmpty()) {</span>
+                            // Convert the word to lowercase and insert into the Trie
+<span class="nc" id="L129">                            dictionary.insertWord(word.toLowerCase());</span>
+                        }
+                    }
+<span class="nc" id="L132">                }</span>
+<span class="nc" id="L133">                csvScan.close();</span>
+<span class="nc" id="L134">            } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L135">                System.out.println(&quot;File not found: &quot; + filename);</span>
+<span class="nc" id="L136">                return; // Exit if the file cannot be found</span>
+<span class="nc" id="L137">            }</span>
+
+            // Scanner for user input
+<span class="nc" id="L140">            Scanner userInput = new Scanner(System.in);</span>
+            while (true) {
+<span class="nc" id="L142">                System.out.println(&quot;Enter a word to search (or type 'exit' to quit): &quot;);</span>
+<span class="nc" id="L143">                String wordInput = userInput.nextLine();</span>
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">                if (wordInput.equalsIgnoreCase(&quot;exit&quot;)) break;</span>
+
+                // Convert to lowercase and check if the word exists in the Trie
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                if (dictionary.searchWord(wordInput.toLowerCase())) {</span>
+<span class="nc" id="L149">                    System.out.println(wordInput + &quot; was found in the dictionary!&quot;);</span>
+                } else {
+                    // If not found, suggest similar words
+<span class="nc" id="L152">                    System.out.println(wordInput + &quot; not found. Closest matches are: &quot; + suggestSimilarWords(dictionary, wordInput.toLowerCase(), 7));</span>
+                }
+<span class="nc" id="L154">            }</span>
+<span class="nc" id="L155">            userInput.close();</span>
+<span class="nc" id="L156">        }</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

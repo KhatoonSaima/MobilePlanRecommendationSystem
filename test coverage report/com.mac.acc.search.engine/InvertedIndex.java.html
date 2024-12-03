@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvertedIndex.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.search.engine</a> &gt; <span class="el_source">InvertedIndex.java</span></div><h1>InvertedIndex.java</h1><pre class="source lang-java linenums">package com.mac.acc.search.engine;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+
+/**
+ * Implementation of a Trie-based inverted index for efficient word lookup.
+ * Stores word frequency counts for each document in the collection.
+ * @author Weiming Zheng (Main contributor) with Saima Khatoon (contributed to line of code for Frequency Counts from 58 to 60)
+ * @since 2024-11-30
+ */
+<span class="fc" id="L13">@Slf4j</span>
+public class InvertedIndex implements Trie {
+    /** Current node index for trie construction */
+<span class="fc" id="L16">    private int idx = 0;</span>
+
+    /** List of maps representing trie nodes and their children */
+<span class="fc" id="L19">    private final List&lt;Map&lt;Character, Integer&gt;&gt; ne = new ArrayList&lt;&gt;();</span>
+
+    /** Total number of documents in the collection */
+    private final int n;
+
+    /** Frequency counts for words at each trie node */
+<span class="fc" id="L25">    private final List&lt;List&lt;Integer&gt;&gt; freqCnts = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Creates a new inverted index for the specified number of documents.
+     * @param n Number of documents in the collection
+     */
+<span class="fc" id="L31">    public InvertedIndex(int n) {</span>
+<span class="fc" id="L32">        this.n = n;</span>
+<span class="fc" id="L33">        this.ne.add(new HashMap&lt;&gt;());</span>
+<span class="fc" id="L34">        this.freqCnts.add(new ArrayList&lt;&gt;(Collections.nCopies(n, 0)));</span>
+<span class="fc" id="L35">        this.freqCnts.add(null);</span>
+<span class="fc" id="L36">        log.info(&quot;Initialized InvertedIndex for {} documents&quot;, n);</span>
+<span class="fc" id="L37">    }</span>
+
+    @Override
+    public void insert(String word, int documentNo) {
+<span class="fc" id="L41">        log.debug(&quot;Inserting word '{}' for document {}&quot;, word, documentNo);</span>
+<span class="fc" id="L42">        int u = 0;</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (Character c : word.toCharArray()) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            if (!ne.get(u).containsKey(c)) {</span>
+<span class="fc" id="L45">                ++idx;</span>
+<span class="fc" id="L46">                ne.get(u).put(c, idx);</span>
+<span class="fc" id="L47">                ne.add(new HashMap&lt;&gt;());</span>
+<span class="fc" id="L48">                freqCnts.add(null);</span>
+            }
+<span class="fc" id="L50">            u = ne.get(u).get(c);</span>
+        }
+
+        // Initialize frequency count vector if needed
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (freqCnts.get(u) == null) {</span>
+<span class="fc" id="L55">            freqCnts.set(u, new ArrayList&lt;&gt;(Collections.nCopies(n, 0)));</span>
+        }
+
+        // Increment frequency count for this word in the document (credit to Saima Khatoon's Frequency Count implementation)
+<span class="fc" id="L59">        List&lt;Integer&gt; counts = freqCnts.get(u);</span>
+<span class="fc" id="L60">        counts.set(documentNo, counts.get(documentNo) + 1);</span>
+<span class="fc" id="L61">    }</span>
+
+    @Override
+    public List&lt;Integer&gt; query(String word) {
+<span class="fc" id="L65">        log.debug(&quot;Querying word: '{}'&quot;, word);</span>
+<span class="fc" id="L66">        int u = 0;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for (Character c : word.toCharArray()) {</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            if (!ne.get(u).containsKey(c)) {</span>
+<span class="fc" id="L69">                log.debug(&quot;Word '{}' not found in index&quot;, word);</span>
+<span class="fc" id="L70">                return new ArrayList&lt;&gt;(Collections.nCopies(n, 0));</span>
+            }
+<span class="fc" id="L72">            u = ne.get(u).get(c);</span>
+        }
+
+<span class="fc" id="L75">        log.debug(&quot;Found frequency vector for word '{}'&quot;, word);</span>
+<span class="fc" id="L76">        return freqCnts.get(u);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

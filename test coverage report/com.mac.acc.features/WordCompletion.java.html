@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WordCompletion.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.features</a> &gt; <span class="el_source">WordCompletion.java</span></div><h1>WordCompletion.java</h1><pre class="source lang-java linenums">package com.mac.acc.features;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import static java.lang.System.out;
+
+<span class="fc" id="L11">public class WordCompletion{</span>
+    //node class
+    class NodeT{
+<span class="fc" id="L14">        NodeT cld[] = new NodeT[26];</span>
+<span class="fc" id="L15">        boolean eow = false;// end of the word</span>
+<span class="fc" id="L16">        public NodeT() {</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">            for(int i=0; i&lt;26; i++){</span>
+<span class="fc" id="L18">                cld[i] = null;</span>
+            }
+<span class="fc" id="L20">        }</span>
+    }
+
+<span class="fc" id="L23">    public NodeT toproot = new NodeT();</span>
+
+    //method of insert a word into the trie
+    public void insert(String word) {
+<span class="fc" id="L27">        NodeT current = toproot;</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        for(int level=0; level&lt;word.length(); level++){</span>
+<span class="fc" id="L29">            int idx = word.charAt(level) - 'a';</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            if(current.cld[idx] == null){</span>
+<span class="fc" id="L31">                current.cld[idx] = new NodeT();</span>
+            }
+<span class="fc" id="L33">            current = current.cld[idx];</span>
+        }
+<span class="fc" id="L35">        current.eow = true;</span>
+
+<span class="fc" id="L37">    }</span>
+
+
+    // print the whole trie
+    public void printTrie() {
+<span class="nc" id="L42">        printHelper(toproot, &quot;&quot;);</span>
+<span class="nc" id="L43">    }</span>
+
+    public void printHelper(NodeT node, String prex) {
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (node.eow) {</span>
+<span class="nc" id="L47">            out.println(prex); // when a word, print it out</span>
+        }
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        for (int i = 0; i &lt; 26; i++) {</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            if (node.cld[i] != null) {</span>
+<span class="nc" id="L51">                char childChar = (char) (i + 'a');</span>
+<span class="nc" id="L52">                printHelper(node.cld[i], prex + childChar); // recursively print out all nodes</span>
+            }
+        }
+<span class="nc" id="L55">    }</span>
+    // find the word start with the given prex
+    public List&lt;String&gt; prefixfinder(String prex) {
+<span class="fc" id="L58">        List&lt;String&gt; completions = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L60">        NodeT curr = toproot;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (int i = 0; i &lt; prex.length(); i++) {</span>
+<span class="fc" id="L62">            char c = prex.charAt(i);</span>
+            // Check if the character is a valid lowercase letter
+<span class="pc bpc" id="L64" title="1 of 4 branches missed.">            if (c &lt; 'a' || c &gt; 'z') {</span>
+<span class="fc" id="L65">                System.out.println(&quot;Invalid input: prefix contains non-alphabetic character \&quot;&quot; + c + &quot;\&quot;&quot;);</span>
+<span class="fc" id="L66">                return completions; // Return an empty list if invalid character found</span>
+            }
+<span class="fc" id="L68">            int index = c - 'a';</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (curr.cld[index] == null) {</span>
+<span class="fc" id="L70">                return completions; // Return empty if prefix does not exist</span>
+            }
+<span class="fc" id="L72">            curr = curr.cld[index];</span>
+        }
+
+        // Collect all words starting from this node
+<span class="fc" id="L76">        collectWords(curr, prex, completions);</span>
+<span class="fc" id="L77">        return completions;</span>
+    }
+
+
+    // Helper method to collect words recursively
+    private void collectWords(NodeT node, String prex, List&lt;String&gt; completions) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (node.eow) {</span>
+<span class="fc" id="L84">            completions.add(prex);</span>
+        }
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        for (int i = 0; i &lt; 26; i++) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if (node.cld[i] != null) {</span>
+<span class="fc" id="L88">                char childChar = (char) (i + 'a');</span>
+<span class="fc" id="L89">                collectWords(node.cld[i], prex + childChar, completions);</span>
+            }
+        }
+<span class="fc" id="L92">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L95">        WordCompletion trie = new WordCompletion();</span>
+
+        //vocabulary
+<span class="nc" id="L98">        String csvFile = &quot;src/main/resources/mobile_plans.csv&quot;;</span>
+        String line;
+<span class="nc" id="L100">        String delimiter = &quot;,&quot;;</span>
+
+        // establish trie
+<span class="nc" id="L103">        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            while ((line = br.readLine()) != null) {</span>
+                // row
+<span class="nc" id="L106">                String[] cells = line.split(delimiter);</span>
+
+<span class="nc bnc" id="L108" title="All 2 branches missed.">                for (String cell : cells) {</span>
+                    // eliminate all the non-letter character,only save letter and change it into lower-case letter
+<span class="nc" id="L110">                    String cleanedCell = cell.replaceAll(&quot;[^a-zA-Z\\s]&quot;, &quot;&quot;).toLowerCase();</span>
+
+                    // split string with single blankspace
+<span class="nc" id="L113">                    String[] words = cleanedCell.trim().split(&quot;\\s+&quot;);</span>
+                    // implement the trie
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                    for (String word : words) {</span>
+<span class="nc" id="L116">                        trie.insert(word); // insert the vocabulary</span>
+                    }
+                }
+<span class="nc" id="L119">            }</span>
+<span class="nc" id="L120">        } catch (IOException e) {</span>
+<span class="nc" id="L121">            e.printStackTrace();</span>
+<span class="nc" id="L122">        }</span>
+
+        // print the trie
+<span class="nc" id="L125">        out.println(&quot;Words in Trie:&quot;);</span>
+<span class="nc" id="L126">        trie.printTrie();</span>
+
+        // input
+<span class="nc" id="L129">        out.println(&quot;Please enter a prefix : &quot;);</span>
+<span class="nc" id="L130">        Scanner scanner = new Scanner(System.in);</span>
+<span class="nc" id="L131">        String input = scanner.nextLine();</span>
+        //output
+<span class="nc" id="L133">        out.println(&quot;Words start with : “&quot;+input+&quot;”&quot;);</span>
+<span class="nc" id="L134">        trie.prefixfinder(input);</span>
+
+        // Find and display completions
+<span class="nc" id="L137">        List&lt;String&gt; completions = trie.prefixfinder(input);</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (completions.isEmpty()) {</span>
+<span class="nc" id="L139">            System.out.println(&quot;No words found with prefix \&quot;&quot; + input + &quot;\&quot;.&quot;);</span>
+        } else {
+<span class="nc" id="L141">            System.out.println(&quot;Words starting with \&quot;&quot; + input + &quot;\&quot;: &quot; + completions);</span>
+        }
+<span class="nc" id="L143">    }</span>
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,38 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+final-project,com.mac.acc.features,SearchFrequencyQueryFactory,3,4,0,0,1,1,1,1,1,1
+final-project,com.mac.acc.features,SpellChecker,3,0,0,0,1,0,1,0,1,0
+final-project,com.mac.acc.features,SpellChecker.TrieNode,0,10,0,0,0,3,0,1,0,1
+final-project,com.mac.acc.features,WordCompletion.NodeT,0,22,0,2,0,6,0,2,0,1
+final-project,com.mac.acc.features,WordCompletion,158,137,15,17,36,30,11,12,3,4
+final-project,com.mac.acc.features,SearchBar,55,227,4,20,16,48,6,13,2,5
+final-project,com.mac.acc.features,SimpleSearchFrequencyQuery,42,94,5,7,4,18,7,7,2,6
+final-project,com.mac.acc.features,SpellChecker.Trie,102,283,15,33,26,49,11,20,1,6
+final-project,com.mac.acc.search.engine,SearchEngineFactory,3,5,0,0,1,1,1,1,1,1
+final-project,com.mac.acc.search.engine,FieldCondition,3,25,0,0,1,6,1,2,1,2
+final-project,com.mac.acc.search.engine,InvertedIndex,0,226,0,10,0,34,0,9,0,4
+final-project,com.mac.acc.search.engine,MobileDataPlanSearchEngine,79,457,10,22,14,105,10,24,0,18
+final-project,com.mac.acc.search.engine,VectorUtil,66,173,14,16,6,32,14,10,2,7
+final-project,com.mac.acc.search.engine.exception,DocumentProcessingException,9,0,0,0,4,0,2,0,2,0
+final-project,com.mac.acc.search.engine.exception,InvalidSearchFieldException,4,0,0,0,2,0,1,0,1,0
+final-project,com.mac.acc.search.engine.exception,SearchEngineException,9,0,0,0,4,0,2,0,2,0
+final-project,com.mac.acc.ui,LogEntry,3,12,0,0,1,5,1,2,1,2
+final-project,com.mac.acc.ui,SupportTab,84,249,10,0,21,64,6,4,1,4
+final-project,com.mac.acc.ui,PageRankingUI.SearchField,53,0,4,0,9,0,5,0,3,0
+final-project,com.mac.acc.ui,MobilePlanRecommendationSystem.new BasicTabbedPaneUI() {...},24,0,0,0,5,0,2,0,2,0
+final-project,com.mac.acc.ui,Features,67,0,0,0,16,0,2,0,2,0
+final-project,com.mac.acc.ui,MobilePlanRecommendationSystem,108,0,0,0,24,0,3,0,3,0
+final-project,com.mac.acc.ui,SearchBarUI,78,300,7,7,20,70,9,5,3,4
+final-project,com.mac.acc.ui,HomeTab,14,141,2,0,6,33,2,5,1,5
+final-project,com.mac.acc.ui,PageRankingUI,319,0,12,0,69,0,11,0,5,0
+final-project,com.mac.acc.ui,SearchBarUI.new KeyAdapter() {...},22,15,2,0,5,1,2,1,1,1
+final-project,com.mac.acc.ui,SearchBarUI.new DocumentListener() {...},28,26,0,0,8,5,2,2,2,2
+final-project,com.mac.acc.ui,RecommendationTab,204,699,18,50,40,159,17,30,2,9
+final-project,com.mac.acc.recommendation,UserPreferences,0,21,0,0,0,8,0,4,0,4
+final-project,com.mac.acc.recommendation,ScoredPackage,0,21,0,0,0,7,0,4,0,4
+final-project,com.mac.acc.recommendation,PackageRecommender,27,257,8,22,6,51,7,18,0,10
+final-project,com.mac.acc.recommendation,Package,0,39,0,2,0,12,0,7,0,6
+final-project,com.mac.acc.datacomparison,DataComparison,38,379,0,8,16,73,2,9,2,5
+final-project,com.mac.acc.datacomparison,MobilePlans,0,57,0,4,0,11,0,7,0,5
+final-project,com.mac.acc.search,SearchEngineSingleton,63,0,6,0,18,0,5,0,2,0
+final-project,com.mac.acc.search,Document,87,150,13,7,15,37,9,13,1,11
+final-project,com.mac.acc.search,Field,129,38,28,4,0,10,21,7,6,6

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MobilePlanRecommendationSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.ui</a> &gt; <span class="el_source">MobilePlanRecommendationSystem.java</span></div><h1>MobilePlanRecommendationSystem.java</h1><pre class="source lang-java linenums">package com.mac.acc.ui;
+import javax.swing.*;
+import java.awt.*;
+
+<span class="nc" id="L5">public class MobilePlanRecommendationSystem {</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L8">        SwingUtilities.invokeLater(() -&gt; {</span>
+<span class="nc" id="L9">            JFrame frame = new JFrame();</span>
+
+<span class="nc" id="L11">            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+
+            // Frame window size
+<span class="nc" id="L14">            frame.setSize(1000, 800);</span>
+
+            // Create a panel to hold the title label
+<span class="nc" id="L17">            JPanel titlePanel = new JPanel();</span>
+<span class="nc" id="L18">            titlePanel.setBackground(new Color(50, 50, 50)); // Dark background for the title panel</span>
+
+            // Create a label for the title
+<span class="nc" id="L21">            JLabel titleLabel = new JLabel(&quot;Mobile Plan Search &amp; Recommendation System&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L22">            titleLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 20));</span>
+<span class="nc" id="L23">            titleLabel.setForeground(Color.WHITE);</span>
+
+            // Add the label to the title panel
+<span class="nc" id="L26">            titlePanel.add(titleLabel);</span>
+
+            // Set the layout of the frame to BorderLayout
+<span class="nc" id="L29">            frame.setLayout(new BorderLayout());</span>
+
+            // Add the title panel at the top of the frame
+<span class="nc" id="L32">            frame.add(titlePanel, BorderLayout.NORTH);</span>
+
+            // Tabbed Pane
+<span class="nc" id="L35">            JTabbedPane tabbedPane = new JTabbedPane();</span>
+
+            // Set font size for tab labels
+<span class="nc" id="L38">            tabbedPane.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 16));</span>
+
+            // Home Tab
+<span class="nc" id="L41">            tabbedPane.addTab(&quot;Home&quot;, new HomeTab());</span>
+
+            // Recommendation Tab
+<span class="nc" id="L44">            tabbedPane.addTab(&quot;Recommendation&quot;, new RecommendationTab());</span>
+
+            // Features Tab
+<span class="nc" id="L47">            tabbedPane.addTab(&quot;Features&quot;, new Features());</span>
+
+            // Support Tab
+<span class="nc" id="L50">            tabbedPane.addTab(&quot;Support&quot;, new SupportTab());</span>
+
+            // Customize the tabbed pane UI (optional) to make it look cleaner
+<span class="nc" id="L53">            tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {</span>
+                @Override
+                protected void installDefaults() {
+<span class="nc" id="L56">                    super.installDefaults();</span>
+<span class="nc" id="L57">                    tabInsets = new Insets(7, 7, 7, 7);  // Remove excessive padding</span>
+<span class="nc" id="L58">                    tabAreaInsets = new Insets(7, 7, 7, 7);  // Adjust tab area insets</span>
+<span class="nc" id="L59">                }</span>
+            });
+
+            // Add TabbedPane to Frame
+<span class="nc" id="L63">            frame.add(tabbedPane, BorderLayout.CENTER);</span>
+
+            // Set frame visibility
+<span class="nc" id="L66">            frame.setVisible(true);</span>
+<span class="nc" id="L67">        });</span>
+<span class="nc" id="L68">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HomeTab.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.ui</a> &gt; <span class="el_source">HomeTab.java</span></div><h1>HomeTab.java</h1><pre class="source lang-java linenums">package com.mac.acc.ui;
+import com.mac.acc.datacomparison.DataComparison;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
+
+public class HomeTab extends JPanel {
+
+<span class="fc" id="L10">    public HomeTab() {</span>
+        // Set the layout of the panel to BorderLayout
+<span class="fc" id="L12">        setLayout(new BorderLayout());</span>
+
+        // Create a JLabel for the header text, centered, with specific font
+<span class="fc" id="L15">        JLabel homeLabel = new JLabel(&quot;Get the best plan based on data or price&quot;, SwingConstants.CENTER);</span>
+<span class="fc" id="L16">        homeLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 16));</span>
+        //homeLabel.setForeground(Color.BLUE);
+
+        // Add the JLabel to the top of the panel (NORTH position)
+<span class="fc" id="L20">        add(homeLabel, BorderLayout.NORTH);</span>
+
+        // Create a JPanel to hold the buttons
+<span class="fc" id="L23">        JPanel buttonPanel = new JPanel();</span>
+
+        // Create two buttons: one for Data and another for Price
+<span class="fc" id="L26">        JButton dataButton = new JButton(&quot;Data&quot;);</span>
+<span class="fc" id="L27">        JButton priceButton = new JButton(&quot;Price&quot;);</span>
+
+        // Set a larger preferred size for the buttons
+<span class="fc" id="L30">        dataButton.setPreferredSize(new Dimension(150, 50));  // Width 200, Height 50</span>
+<span class="fc" id="L31">        priceButton.setPreferredSize(new Dimension(150, 50)); // Width 200, Height 50</span>
+
+        // Increase the font size to make the text inside the button larger
+<span class="fc" id="L34">        dataButton.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 15));  // Larger font size</span>
+<span class="fc" id="L35">        priceButton.setFont(new Font(&quot;Arial&quot;, Font.PLAIN, 15)); // Larger font size</span>
+
+        // Create a JEditorPane to display the recommended plan, with set dimensions
+<span class="fc" id="L38">        JEditorPane outputArea = new JEditorPane(); // Enable line wrapping for the text area</span>
+<span class="fc" id="L39">        outputArea.setContentType(&quot;text/html&quot;); // Enable HTML rendering</span>
+<span class="fc" id="L40">        outputArea.setEditable(false);  // Make the output area non-editable</span>
+
+        // Add a titled border
+<span class="fc" id="L43">        outputArea.setBorder(BorderFactory.createTitledBorder(&quot;Recommended Plan&quot;));</span>
+
+        // Add buttons to the button panel
+<span class="fc" id="L46">        buttonPanel.add(dataButton);</span>
+<span class="fc" id="L47">        buttonPanel.add(priceButton);</span>
+
+        // Add the button panel to the center of the layout
+<span class="fc" id="L50">        add(buttonPanel, BorderLayout.CENTER);</span>
+
+        // Add the JEditorPane (wrapped in a JScrollPane) to the bottom of the panel (SOUTH position)
+<span class="fc" id="L53">        add(new JScrollPane(outputArea), BorderLayout.SOUTH);</span>
+
+        // Make JEditorPane larger
+<span class="fc" id="L56">        outputArea.setPreferredSize(new Dimension(600, 400)); // Adjust width and height as needed</span>
+
+
+        // Data Button action listener
+<span class="fc" id="L60">        dataButton.addActionListener(e -&gt; {</span>
+            // Fetch the data-based plan
+<span class="fc" id="L62">            String recommendedPlan = getRecommendedPlanBasedOnData();</span>
+            // Display it in the output area
+<span class="fc" id="L64">            outputArea.setText(recommendedPlan);</span>
+<span class="fc" id="L65">        });</span>
+
+        // Price Button action listener
+<span class="fc" id="L68">        priceButton.addActionListener(e -&gt; {</span>
+            // Fetch the price-based plan
+<span class="fc" id="L70">            String recommendedPlan = getRecommendedPlanBasedOnPrice();</span>
+            // Display it in the output area
+<span class="fc" id="L72">            outputArea.setText(recommendedPlan);</span>
+<span class="fc" id="L73">        });</span>
+
+        // Add hyperlink listener for clickable links
+<span class="fc" id="L76">        outputArea.addHyperlinkListener(e -&gt; {</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {</span>
+                try {
+<span class="nc" id="L79">                    Desktop.getDesktop().browse(e.getURL().toURI());</span>
+<span class="nc" id="L80">                } catch (Exception ex) {</span>
+<span class="nc" id="L81">                    ex.printStackTrace();</span>
+<span class="nc" id="L82">                }</span>
+            }
+<span class="nc" id="L84">        });</span>
+
+<span class="fc" id="L86">    }</span>
+
+    // Function to recommend best plan based on data
+    private String getRecommendedPlanBasedOnData() {
+<span class="fc" id="L90">        return DataComparison.comparePlansByData();</span>
+    }
+
+    // Function to recommend best plan based on price
+    private String getRecommendedPlanBasedOnPrice() {
+<span class="fc" id="L95">        return DataComparison.comparePlansByCost();</span>
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

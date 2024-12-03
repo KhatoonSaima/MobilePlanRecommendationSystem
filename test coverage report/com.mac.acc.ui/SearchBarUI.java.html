@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SearchBarUI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.ui</a> &gt; <span class="el_source">SearchBarUI.java</span></div><h1>SearchBarUI.java</h1><pre class="source lang-java linenums">package com.mac.acc.ui;
+
+import com.mac.acc.features.SearchBar;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+<span class="nc" id="L11">public class SearchBarUI {</span>
+
+    public static JPanel createPanel() {
+
+        // Create a panel with GridLayout (2 rows, 1 column)
+<span class="fc" id="L16">        JPanel panel = new JPanel(new GridLayout(2, 1)); // Divides the panel into 2 halves</span>
+
+        // Top half
+<span class="fc" id="L19">        JPanel topPanel = new JPanel();</span>
+        // Bottom half
+<span class="fc" id="L21">        JPanel bottomPanel = new JPanel();</span>
+
+        // Add the panels to the GridLayout
+<span class="fc" id="L24">        panel.add(topPanel);</span>
+<span class="fc" id="L25">        panel.add(bottomPanel);</span>
+
+        // Create main search bar panel with vertical layout
+<span class="fc" id="L28">        JPanel searchBarPanel = new JPanel();</span>
+<span class="fc" id="L29">        searchBarPanel.setLayout(new BoxLayout(searchBarPanel, BoxLayout.Y_AXIS));</span>
+
+        // Panel for input field and search button
+<span class="fc" id="L32">        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));</span>
+<span class="fc" id="L33">        JTextField searchField = new JTextField(30);</span>
+<span class="fc" id="L34">        JButton searchButton = new JButton(&quot;Search&quot;);</span>
+<span class="fc" id="L35">        inputPanel.add(new JLabel(&quot;Search:&quot;));</span>
+<span class="fc" id="L36">        inputPanel.add(searchField);</span>
+<span class="fc" id="L37">        inputPanel.add(searchButton);</span>
+
+        // Panel to display word completions
+<span class="fc" id="L40">        JPanel suggestionsPanel = new JPanel();</span>
+<span class="fc" id="L41">        suggestionsPanel.setLayout(new BoxLayout(suggestionsPanel, BoxLayout.Y_AXIS));</span>
+<span class="fc" id="L42">        suggestionsPanel.setVisible(false); // Initially hidden</span>
+<span class="fc" id="L43">        searchBarPanel.add(inputPanel);</span>
+<span class="fc" id="L44">        searchBarPanel.add(suggestionsPanel);</span>
+
+        // Result label panel
+<span class="fc" id="L47">        JLabel resultLabel = new JLabel(&quot; &quot;);</span>
+<span class="fc" id="L48">        resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);</span>
+
+        // Add result label first
+<span class="fc" id="L51">        searchBarPanel.add(resultLabel);</span>
+<span class="fc" id="L52">        topPanel.add(searchBarPanel);</span>
+
+        // Create frequency panel with JScrollPane for the frequency list
+<span class="fc" id="L55">        JPanel frequencyPanelContainer = new JPanel();</span>
+<span class="fc" id="L56">        frequencyPanelContainer.setLayout(new BoxLayout(frequencyPanelContainer, BoxLayout.Y_AXIS));</span>
+<span class="fc" id="L57">        frequencyPanelContainer.setBorder(BorderFactory.createTitledBorder(&quot;Search Frequency&quot;));</span>
+
+<span class="fc" id="L59">        JPanel frequencyPanel = new JPanel();</span>
+<span class="fc" id="L60">        frequencyPanel.setLayout(new BoxLayout(frequencyPanel, BoxLayout.Y_AXIS));</span>
+<span class="fc" id="L61">        frequencyPanel.setBackground(Color.WHITE);</span>
+
+<span class="fc" id="L63">        JScrollPane frequencyScrollPane = new JScrollPane(frequencyPanel);</span>
+<span class="fc" id="L64">        frequencyScrollPane.getViewport().setBackground(Color.WHITE);</span>
+<span class="fc" id="L65">        frequencyScrollPane.setPreferredSize(new Dimension(600, 200));  // Set a preferred size for the frequency box</span>
+<span class="fc" id="L66">        frequencyPanelContainer.add(frequencyScrollPane);</span>
+
+<span class="fc" id="L68">        bottomPanel.add(frequencyPanelContainer);  // Add the frequency panel container below the result label</span>
+
+        // Word completion logic as you type
+<span class="fc" id="L71">        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {</span>
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+<span class="fc" id="L74">                suggestionsPanel.setVisible(false);</span>
+<span class="fc" id="L75">               resultLabel.setVisible(false);</span>
+<span class="fc" id="L76">                showCompletionSuggestions(searchField, suggestionsPanel);</span>
+<span class="fc" id="L77">            }</span>
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+<span class="nc" id="L81">                suggestionsPanel.setVisible(false);</span>
+<span class="nc" id="L82">                resultLabel.setVisible(false);</span>
+<span class="nc" id="L83">                showCompletionSuggestions(searchField, suggestionsPanel);</span>
+<span class="nc" id="L84">            }</span>
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+<span class="nc" id="L88">                suggestionsPanel.setVisible(false);</span>
+<span class="nc" id="L89">               resultLabel.setVisible(false);</span>
+<span class="nc" id="L90">                showCompletionSuggestions(searchField, suggestionsPanel);</span>
+<span class="nc" id="L91">            }</span>
+        });
+
+
+        // Action when &quot;Search&quot; button is clicked or Enter key is pressed
+<span class="fc" id="L96">        searchButton.addActionListener(e -&gt; performSearch(searchField, resultLabel, suggestionsPanel, frequencyPanel));</span>
+<span class="fc" id="L97">        searchField.addKeyListener(new KeyAdapter() {</span>
+            @Override
+            public void keyPressed(KeyEvent e) {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                if (e.getKeyCode() == KeyEvent.VK_ENTER) {</span>
+<span class="nc" id="L101">                    suggestionsPanel.setVisible(true);</span>
+<span class="nc" id="L102">                    resultLabel.setVisible(true);</span>
+<span class="nc" id="L103">                    performSearch(searchField, resultLabel, suggestionsPanel, frequencyPanel);</span>
+                }
+<span class="nc" id="L105">            }</span>
+        });
+
+<span class="fc" id="L108">        return panel;</span>
+    }
+
+    private static void showCompletionSuggestions(JTextField searchField, JPanel suggestionsPanel) {
+<span class="fc" id="L112">        String input = searchField.getText().trim().toLowerCase();</span>
+
+        // Clear previous suggestions
+<span class="fc" id="L115">        suggestionsPanel.removeAll();</span>
+
+        // Check for completions as you type
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (!input.isEmpty()) {</span>
+<span class="fc" id="L119">            List&lt;String&gt; completions = SearchBar.getWordCompletions(input);</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            if (!completions.isEmpty()) {</span>
+                // Create a new panel to hold the suggestion buttons horizontally
+<span class="nc" id="L122">                JPanel suggestionButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0)); // 10 px horizontal spacing</span>
+
+                // Add the suggestion buttons to the new panel
+<span class="nc" id="L125">                completions.stream().limit(3).forEach(word -&gt; {</span>
+<span class="nc" id="L126">                    JButton suggestionButton = new JButton(word);</span>
+<span class="nc" id="L127">                    suggestionButton.addActionListener(e -&gt; {</span>
+<span class="nc" id="L128">                        searchField.setText(word);  // Set selected suggestion in search field</span>
+<span class="nc" id="L129">                        suggestionsPanel.setVisible(false); // Hide suggestions after selection</span>
+<span class="nc" id="L130">                    });</span>
+<span class="nc" id="L131">                    suggestionButtonPanel.add(suggestionButton);</span>
+<span class="nc" id="L132">                });</span>
+
+                // Add the suggestion button panel to the main suggestions panel
+<span class="nc" id="L135">                suggestionsPanel.add(suggestionButtonPanel);</span>
+<span class="nc" id="L136">                suggestionsPanel.setVisible(true);</span>
+<span class="nc" id="L137">            } else {</span>
+<span class="fc" id="L138">                suggestionsPanel.setVisible(false);</span>
+            }
+<span class="fc" id="L140">        } else {</span>
+<span class="nc" id="L141">            suggestionsPanel.setVisible(false);</span>
+        }
+
+        // Refresh the panel
+<span class="fc" id="L145">        suggestionsPanel.revalidate();</span>
+<span class="fc" id="L146">        suggestionsPanel.repaint();</span>
+<span class="fc" id="L147">    }</span>
+
+    private static void performSearch(JTextField searchField, JLabel resultLabel, JPanel suggestionsPanel, JPanel frequencyPanel) {
+<span class="fc" id="L150">        String input = searchField.getText().trim().toLowerCase();</span>
+
+<span class="fc" id="L152">        suggestionsPanel.setVisible(true);</span>
+<span class="fc" id="L153">        resultLabel.setVisible(true);</span>
+
+        // Clear suggestions when search is performed
+<span class="fc" id="L156">        suggestionsPanel.removeAll();</span>
+<span class="fc" id="L157">        suggestionsPanel.revalidate();</span>
+<span class="fc" id="L158">        suggestionsPanel.repaint();</span>
+
+        // Clear previous frequency list
+<span class="fc" id="L161">        frequencyPanel.removeAll();</span>
+<span class="fc" id="L162">        frequencyPanel.revalidate();</span>
+<span class="fc" id="L163">        frequencyPanel.repaint();</span>
+
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if (input.isEmpty()) {</span>
+<span class="nc" id="L166">            resultLabel.setText(&quot;Error: Input field is empty!&quot;);</span>
+<span class="nc" id="L167">            resultLabel.setForeground(Color.RED);</span>
+        } else {
+            // Use the updated SearchBar.handleSearch() to get the result
+<span class="fc" id="L170">            String result = SearchBar.handleSearch(input, 5, 2); // Adjust maxSuggestions and maxEditDistance as needed</span>
+
+            // Style the result message based on its content
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            if (result.startsWith(&quot;Word match found:&quot;)) {</span>
+<span class="nc" id="L174">                resultLabel.setForeground(Color.PINK); // Highlight exact matches in green</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">            } else if (result.startsWith(&quot;Did you mean:&quot;)) {</span>
+<span class="fc" id="L176">                resultLabel.setForeground(Color.BLUE); // Highlight corrections in blue</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            } else if (result.startsWith(&quot;Word Completions:&quot;)) {</span>
+<span class="nc" id="L178">                resultLabel.setForeground(Color.BLACK); // Highlight suggestions in black</span>
+            } else {
+<span class="nc" id="L180">                resultLabel.setForeground(Color.ORANGE); // For &quot;No match found&quot;</span>
+            }
+
+<span class="fc" id="L183">            resultLabel.setText(result);</span>
+
+            // Now, display the search frequency list below the result label
+<span class="fc" id="L186">            String frequencyResult = SearchBar.displaySearchFrequency();</span>
+<span class="fc" id="L187">            String[] lines = frequencyResult.split(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            for (String line : lines) {</span>
+<span class="fc" id="L189">                JLabel frequencyLabel = new JLabel(line);</span>
+<span class="fc" id="L190">                frequencyPanel.add(frequencyLabel);</span>
+            }
+        }
+
+        // Refresh the frequency panel
+<span class="fc" id="L195">        frequencyPanel.revalidate();</span>
+<span class="fc" id="L196">        frequencyPanel.repaint();</span>
+<span class="fc" id="L197">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

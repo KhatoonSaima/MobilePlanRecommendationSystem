@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleSearchFrequencyQuery.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.features</a> &gt; <span class="el_source">SimpleSearchFrequencyQuery.java</span></div><h1>SimpleSearchFrequencyQuery.java</h1><pre class="source lang-java linenums">package com.mac.acc.features;
+
+import com.mac.acc.ui.LogEntry;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+/**
+ * A class that implements SearchFrequencyQuery interface to track and analyze search queries
+ * Uses a self-balancing tree (TreeMap) for frequency tracking and ArrayList for logging
+ *
+ * @author weiming zheng
+ * @since 2024-10-29
+ */
+<span class="fc" id="L15">public class SimpleSearchFrequencyQuery implements SearchFrequencyQuery {</span>
+    // TreeMap (Red-Black tree) to store search queries (key) and their frequencies (value)
+    // Automatically maintains keys in sorted order
+<span class="fc" id="L18">    private final TreeMap&lt;String, Integer&gt; searchTree = new TreeMap&lt;&gt;();</span>
+
+    // ArrayList to maintain chronological history of all searches
+<span class="fc" id="L21">    private final List&lt;LogEntry&gt; log = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Returns the top N most frequently searched queries
+     * @param n The number of top queries to return
+     * @return List of entries containing query strings and their frequencies,
+     *         sorted by frequency in descending order
+     */
+    @Override
+    public List&lt;AbstractMap.SimpleEntry&lt;String, Integer&gt;&gt; getTopNSearchedQueries(int n) {
+        // Handle edge cases
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (n &lt; 0) return null;                    // Invalid input</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (n == 0) return new ArrayList&lt;&gt;();      // Empty list requested</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (n &gt; searchTree.size()) n = searchTree.size();  // Adjust if n exceeds available entries</span>
+
+        // Convert TreeMap entries to stream, sort by values (frequencies) in descending order,
+        // take top n entries, create deep copies of entries, and collect to list
+<span class="fc" id="L38">        return searchTree.entrySet().stream()</span>
+<span class="fc" id="L39">                .sorted(Map.Entry.&lt;String, Integer&gt;comparingByValue().reversed())</span>
+<span class="fc" id="L40">                .limit(n)</span>
+<span class="fc" id="L41">                .map(pair -&gt; new AbstractMap.SimpleEntry&lt;&gt;(pair.getKey(), pair.getValue()))</span>
+<span class="fc" id="L42">                .toList();</span>
+    }
+
+    /**
+     * Returns all searched queries sorted by frequency in descending order
+     * @return List of all entries containing query strings and their frequencies
+     */
+    @Override
+    public List&lt;AbstractMap.SimpleEntry&lt;String, Integer&gt;&gt; getTopNSearchedQueries() {
+<span class="nc" id="L51">        return getTopNSearchedQueries(searchTree.size());</span>
+    }
+
+    /**
+     * Records a new search query by updating its frequency and logging the event
+     * @param query The search query string to be recorded
+     */
+    @Override
+    public void insertSearchedQuery(String query) {
+        // Increment frequency count (or initialize to 1 if first occurrence)
+<span class="fc" id="L61">        searchTree.put(query, searchTree.getOrDefault(query, 0) + 1);</span>
+        // Add entry to chronological log with current timestamp
+<span class="fc" id="L63">        log.add(new LogEntry(query, LocalDateTime.now()));</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Returns the most recent n log entries
+     * @param n The number of most recent log entries to return
+     * @return List of the most recent n LogEntry objects (deep copy)
+     */
+    @Override
+    public List&lt;LogEntry&gt; getLog(int n) {
+        // Handle edge cases
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (n &lt; 0) return null;                // Invalid input</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if (n == 0) return new ArrayList&lt;&gt;();  // Empty list requested</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if (n &gt;= log.size()) return log;       // Return all if n exceeds log size</span>
+
+        // Get sublist of most recent n entries, create deep copies, and collect to list
+<span class="nc" id="L79">        return log.subList(log.size() - n, log.size()).stream()</span>
+<span class="nc" id="L80">                .map(entry -&gt; new LogEntry(entry.getQuery(), entry.getTimestamp()))</span>
+<span class="nc" id="L81">                .toList();</span>
+    }
+
+    /**
+     * Returns all log entries in chronological order
+     * @return List of all LogEntry objects
+     */
+    @Override
+    public List&lt;LogEntry&gt; getLog() {
+<span class="fc" id="L90">        return getLog(log.size());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

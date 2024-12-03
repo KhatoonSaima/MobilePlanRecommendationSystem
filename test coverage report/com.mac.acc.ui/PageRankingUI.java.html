@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PageRankingUI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.ui</a> &gt; <span class="el_source">PageRankingUI.java</span></div><h1>PageRankingUI.java</h1><pre class="source lang-java linenums">package com.mac.acc.ui;
+import com.mac.acc.search.Field;
+import com.mac.acc.search.SearchEngineSingleton;
+import com.mac.acc.search.engine.FieldCondition;
+import com.mac.acc.search.engine.SearchEngine;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+
+<span class="nc" id="L13">public class PageRankingUI {</span>
+    private static class SearchField {
+        JTextField searchBox;
+        JToggleButton scopeButton;
+        JToggleButton caseButton;
+
+<span class="nc" id="L19">        public SearchField() {</span>
+<span class="nc" id="L20">            searchBox = new JTextField(30);</span>
+<span class="nc" id="L21">            scopeButton = new JToggleButton(&quot;Tight&quot;);</span>
+<span class="nc" id="L22">            caseButton = new JToggleButton(&quot;Case-insensitive&quot;);</span>
+
+            // Configure toggle buttons
+<span class="nc" id="L25">            scopeButton.addActionListener(e -&gt;</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">                    scopeButton.setText(scopeButton.isSelected() ? &quot;Loose&quot; : &quot;Tight&quot;));</span>
+<span class="nc" id="L27">            caseButton.addActionListener(e -&gt;</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">                    caseButton.setText(caseButton.isSelected() ? &quot;Case-sensitive&quot; : &quot;Case-insensitive&quot;));</span>
+<span class="nc" id="L29">        }</span>
+    }
+
+    public static JPanel createPanel() {
+<span class="nc" id="L33">        JPanel pageRankingPanel = new JPanel(new GridBagLayout());</span>
+<span class="nc" id="L34">        GridBagConstraints gbc = new GridBagConstraints();</span>
+<span class="nc" id="L35">        gbc.insets = new Insets(5, 5, 5, 5);</span>
+<span class="nc" id="L36">        gbc.fill = GridBagConstraints.HORIZONTAL;</span>
+
+        // Field names
+<span class="nc" id="L39">        String[] fieldNames = {</span>
+                &quot;Plan details&quot;, &quot;Data allowance&quot;, &quot;Additional feature&quot;,
+                &quot;Family plan &amp; discounts&quot;, &quot;Overcharge fees&quot;
+        };
+
+        // Create search fields
+<span class="nc" id="L45">        List&lt;SearchField&gt; searchFields = new ArrayList&lt;&gt;();</span>
+
+        // Add header labels
+<span class="nc" id="L48">        gbc.gridy = 0;</span>
+<span class="nc" id="L49">        gbc.gridx = 0; addHeaderLabel(pageRankingPanel, &quot;Field Name&quot;, gbc);</span>
+<span class="nc" id="L50">        gbc.gridx = 1; addHeaderLabel(pageRankingPanel, &quot;Search Box&quot;, gbc);</span>
+<span class="nc" id="L51">        gbc.gridx = 2; addHeaderLabel(pageRankingPanel, &quot;Scope&quot;, gbc);</span>
+<span class="nc" id="L52">        gbc.gridx = 3; addHeaderLabel(pageRankingPanel, &quot;Case Sensitivity&quot;, gbc);</span>
+
+        // Add fields
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        for (int i = 0; i &lt; fieldNames.length; i++) {</span>
+<span class="nc" id="L56">            gbc.gridy = i + 1;</span>
+<span class="nc" id="L57">            SearchField field = new SearchField();</span>
+<span class="nc" id="L58">            searchFields.add(field);</span>
+
+<span class="nc" id="L60">            gbc.gridx = 0;</span>
+<span class="nc" id="L61">            pageRankingPanel.add(new JLabel(fieldNames[i]), gbc);</span>
+
+<span class="nc" id="L63">            gbc.gridx = 1;</span>
+<span class="nc" id="L64">            pageRankingPanel.add(field.searchBox, gbc);</span>
+
+<span class="nc" id="L66">            gbc.gridx = 2;</span>
+<span class="nc" id="L67">            pageRankingPanel.add(field.scopeButton, gbc);</span>
+
+<span class="nc" id="L69">            gbc.gridx = 3;</span>
+<span class="nc" id="L70">            pageRankingPanel.add(field.caseButton, gbc);</span>
+        }
+
+        // Output Area
+<span class="nc" id="L74">        JTextArea outputArea = new JTextArea(20, 60);</span>
+<span class="nc" id="L75">        outputArea.setEditable(false);</span>
+<span class="nc" id="L76">        outputArea.setLineWrap(true);</span>
+<span class="nc" id="L77">        outputArea.setWrapStyleWord(true);</span>
+<span class="nc" id="L78">        outputArea.setBorder(BorderFactory.createTitledBorder(&quot;Page Ranking with Frequency Count: &quot;));</span>
+
+        // Rank Pages button
+<span class="nc" id="L81">        JButton rankButton = new JButton(&quot;Search&quot;);</span>
+<span class="nc" id="L82">        rankButton.addActionListener(e -&gt; {</span>
+<span class="nc" id="L83">            List&lt;Field&gt; searchCriteria = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            for (SearchField field : searchFields) {</span>
+<span class="nc" id="L85">                String searchText = field.searchBox.getText().trim();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                if (!searchText.isEmpty()) {</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                    FieldCondition scope = field.scopeButton.isSelected() ?</span>
+<span class="nc" id="L88">                            FieldCondition.LOOSE : FieldCondition.TIGHT;</span>
+<span class="nc" id="L89">                    boolean caseSensitive = field.caseButton.isSelected();</span>
+<span class="nc" id="L90">                    searchCriteria.add(new Field(searchText, scope, caseSensitive));</span>
+                }
+<span class="nc" id="L92">            }</span>
+
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            if (searchCriteria.isEmpty()) {</span>
+<span class="nc" id="L95">                JOptionPane.showMessageDialog(null, &quot;Please enter at least one search term&quot;,</span>
+                        &quot;Error&quot;, JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L97">                return;</span>
+            }
+
+<span class="nc" id="L100">            String rankingResult = performRanking(searchCriteria);</span>
+<span class="nc" id="L101">            outputArea.setText(rankingResult);</span>
+<span class="nc" id="L102">        });</span>
+
+        // Add button and output area
+<span class="nc" id="L105">        gbc.gridy++;</span>
+<span class="nc" id="L106">        gbc.gridx = 0;</span>
+<span class="nc" id="L107">        gbc.gridwidth = 4;</span>
+<span class="nc" id="L108">        pageRankingPanel.add(rankButton, gbc);</span>
+
+<span class="nc" id="L110">        gbc.gridy++;</span>
+<span class="nc" id="L111">        pageRankingPanel.add(new JScrollPane(outputArea), gbc);</span>
+
+<span class="nc" id="L113">        return pageRankingPanel;</span>
+    }
+
+    private static void addHeaderLabel(JPanel panel, String text, GridBagConstraints gbc) {
+<span class="nc" id="L117">        JLabel label = new JLabel(text);</span>
+<span class="nc" id="L118">        label.setFont(label.getFont().deriveFont(Font.BOLD));</span>
+<span class="nc" id="L119">        panel.add(label, gbc);</span>
+<span class="nc" id="L120">    }</span>
+
+    private static String performRanking(List&lt;Field&gt; fields) {
+        try {
+<span class="nc" id="L124">            SearchEngine searchEngine = SearchEngineSingleton.getInstance();</span>
+<span class="nc" id="L125">            List&lt;Map.Entry&lt;String, Integer&gt;&gt; results = searchEngine.search(fields);</span>
+
+<span class="nc" id="L127">            StringBuilder resultMessage = new StringBuilder();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            for (Map.Entry&lt;String, Integer&gt; entry : results) {</span>
+<span class="nc" id="L129">                resultMessage.append(entry.getKey())</span>
+<span class="nc" id="L130">                        .append(&quot; - Rank: &quot;)</span>
+<span class="nc" id="L131">                        .append(entry.getValue())</span>
+<span class="nc" id="L132">                        .append(&quot;\n&quot;);</span>
+<span class="nc" id="L133">            }</span>
+
+<span class="nc" id="L135">            return resultMessage.toString();</span>
+<span class="nc" id="L136">        } catch (Exception e) {</span>
+<span class="nc" id="L137">            return &quot;Error performing ranking: &quot; + e.getMessage();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

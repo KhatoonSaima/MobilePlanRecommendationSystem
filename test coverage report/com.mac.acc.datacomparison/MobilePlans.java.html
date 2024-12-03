@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MobilePlans.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.datacomparison</a> &gt; <span class="el_source">MobilePlans.java</span></div><h1>MobilePlans.java</h1><pre class="source lang-java linenums">package com.mac.acc.datacomparison;
+
+import java.util.HashMap;
+
+public class MobilePlans {
+	
+	public HashMap&lt;String,String&gt; plan;  //Stores the plan data
+	public String provider;
+    public String link;
+	
+<span class="fc" id="L11">    public MobilePlans(String provider, String link, HashMap&lt;String,String&gt; plan) {</span>
+<span class="fc" id="L12">    	this.provider = provider;</span>
+<span class="fc" id="L13">    	this.link = link;</span>
+<span class="fc" id="L14">    	this.plan= new HashMap&lt;&gt;(plan);;  //Complete plan details e.g: (Data, 50 GB), (Cost, $35)</span>
+<span class="fc" id="L15">	}</span>
+    
+    public String getProvider() {
+<span class="fc" id="L18">        return provider;</span>
+    }
+
+    
+
+    public HashMap&lt;String, String&gt; getPlan() {
+<span class="fc" id="L24">        return plan;</span>
+    }
+    
+    // Parse numeric cost from the plan
+    public double getCost() {
+<span class="fc" id="L29">        String costStr = plan.getOrDefault(&quot;Plan Cost&quot;, &quot;0&quot;).replaceAll(&quot;[^0-9.]&quot;, &quot;&quot;); // Remove non-numeric characters</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        return costStr.isEmpty() ? 0.0 : Double.parseDouble(costStr);</span>
+    }
+
+    // Parse numeric data from the plan
+    public double getDataLimit() {
+<span class="fc" id="L35">        String dataStr = plan.getOrDefault(&quot;Data&quot;, &quot;0&quot;).replaceAll(&quot;[^0-9.]&quot;, &quot;&quot;); // Remove non-numeric characters</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        return dataStr.isEmpty() ? 0.0 : Double.parseDouble(dataStr);</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

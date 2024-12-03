@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Features.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.ui</a> &gt; <span class="el_source">Features.java</span></div><h1>Features.java</h1><pre class="source lang-java linenums">package com.mac.acc.ui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class Features extends JPanel {
+
+<span class="nc" id="L8">    public Features() {</span>
+<span class="nc" id="L9">        setLayout(new BorderLayout());</span>
+
+        // Dropdown for feature selection
+<span class="nc" id="L12">        JComboBox&lt;String&gt; featureDropdown = new JComboBox&lt;&gt;(new String[]{</span>
+                &quot;Search Pages&quot;, &quot;Search Bar&quot;
+        });
+
+        // Main content panel with CardLayout
+<span class="nc" id="L17">        JPanel featureContentPanel = new JPanel(new CardLayout());</span>
+
+        // Page Ranking Panel
+<span class="nc" id="L20">        JPanel pageRankingPanel = PageRankingUI.createPanel();</span>
+
+        // Search Bar Panel
+<span class="nc" id="L23">        JPanel searchBarPanel = SearchBarUI.createPanel();</span>
+
+        // Add individual panels to the CardLayout panel
+<span class="nc" id="L26">        featureContentPanel.add(pageRankingPanel, &quot;Page Ranking&quot;);</span>
+<span class="nc" id="L27">        featureContentPanel.add(searchBarPanel, &quot;Search Bar&quot;);</span>
+
+        // Action Listener for Dropdown to switch panels
+<span class="nc" id="L30">        featureDropdown.addActionListener(e -&gt; {</span>
+<span class="nc" id="L31">            CardLayout cl = (CardLayout) (featureContentPanel.getLayout());</span>
+<span class="nc" id="L32">            String selectedOption = (String) featureDropdown.getSelectedItem();</span>
+<span class="nc" id="L33">            cl.show(featureContentPanel, selectedOption); // Switch to the selected panel</span>
+<span class="nc" id="L34">        });</span>
+
+        // Add components to the Features Tab
+<span class="nc" id="L37">        add(featureDropdown, BorderLayout.NORTH);</span>
+<span class="nc" id="L38">        add(featureContentPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L39">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

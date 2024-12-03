@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecommendationTab.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.ui</a> &gt; <span class="el_source">RecommendationTab.java</span></div><h1>RecommendationTab.java</h1><pre class="source lang-java linenums">package com.mac.acc.ui;
+
+import com.mac.acc.recommendation.Package;
+import com.mac.acc.recommendation.PackageRecommender;
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
+import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class RecommendationTab extends JPanel {
+    private PackageRecommender recommender;
+    private JTextArea outputArea;
+
+<span class="fc" id="L17">    public RecommendationTab() {</span>
+<span class="fc" id="L18">        recommender = new PackageRecommender();</span>
+<span class="fc" id="L19">        initializeUI(); //UI</span>
+<span class="fc" id="L20">        loadPlansFromCSV(); // INPUT</span>
+<span class="fc" id="L21">    }</span>
+
+    private void initializeUI() {
+<span class="fc" id="L24">        setLayout(new GridBagLayout());</span>
+<span class="fc" id="L25">        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));</span>
+<span class="fc" id="L26">        GridBagConstraints gbc = new GridBagConstraints();</span>
+<span class="fc" id="L27">        gbc.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L28">        gbc.insets = new Insets(10, 10, 10, 10);</span>
+
+        // Title
+<span class="fc" id="L31">        JLabel titleLabel = new JLabel(&quot;Hi! I can recommend plans based on your preference.📱&quot;, SwingConstants.CENTER);</span>
+<span class="fc" id="L32">        titleLabel.setFont(new Font(&quot;Arial&quot;, Font.BOLD, 20));</span>
+<span class="fc" id="L33">        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));</span>
+<span class="fc" id="L34">        gbc.gridx = 0;</span>
+<span class="fc" id="L35">        gbc.gridy = 0;</span>
+<span class="fc" id="L36">        gbc.gridwidth = 2;</span>
+<span class="fc" id="L37">        gbc.anchor = GridBagConstraints.CENTER;</span>
+<span class="fc" id="L38">        add(titleLabel, gbc);</span>
+
+        // Budget Field
+<span class="fc" id="L41">        gbc.gridwidth = 1;</span>
+<span class="fc" id="L42">        gbc.gridx = 0;</span>
+<span class="fc" id="L43">        gbc.gridy = 1;</span>
+<span class="fc" id="L44">        add(new JLabel(&quot;💰 What is your budget ($/month)?&quot;), gbc);</span>
+<span class="fc" id="L45">        JTextField budgetField = new JTextField(20);</span>
+<span class="fc" id="L46">        gbc.gridx = 1;</span>
+<span class="fc" id="L47">        add(budgetField, gbc);</span>
+
+        // Data Amount Field
+<span class="fc" id="L50">        gbc.gridx = 0;</span>
+<span class="fc" id="L51">        gbc.gridy = 2;</span>
+<span class="fc" id="L52">        add(new JLabel(&quot;📊 How much data do you need (GB/month)?&quot;), gbc);</span>
+<span class="fc" id="L53">        JTextField dataField = new JTextField(20);</span>
+<span class="fc" id="L54">        gbc.gridx = 1;</span>
+<span class="fc" id="L55">        add(dataField, gbc);</span>
+
+        // Features Selection
+<span class="fc" id="L58">        gbc.gridx = 0;</span>
+<span class="fc" id="L59">        gbc.gridy = 3;</span>
+<span class="fc" id="L60">        add(new JLabel(&quot;&lt;html&gt;🌍 Select desired features (comma-separated numbers):&lt;br&gt;&quot; +</span>
+                &quot;1. Unlimited Talk Time&lt;br&gt;&quot; +
+                &quot;2. Unlimited Text&lt;br&gt;&quot; +
+                &quot;3. International Calls&lt;br&gt;&quot; +
+                &quot;4. Roaming&lt;br&gt;&quot; +
+                &quot;5. Discount&lt;/html&gt;&quot;), gbc);
+<span class="fc" id="L66">        JTextField featureField = new JTextField(20);</span>
+<span class="fc" id="L67">        gbc.gridx = 1;</span>
+<span class="fc" id="L68">        add(featureField, gbc);</span>
+
+        // Output Area
+<span class="fc" id="L71">        outputArea = new JTextArea(10, 40);</span>
+<span class="fc" id="L72">        outputArea.setEditable(false);</span>
+<span class="fc" id="L73">        outputArea.setLineWrap(true);</span>
+<span class="fc" id="L74">        outputArea.setWrapStyleWord(true);</span>
+<span class="fc" id="L75">        JScrollPane scrollPane = new JScrollPane(outputArea);</span>
+<span class="fc" id="L76">        gbc.gridx = 0;</span>
+<span class="fc" id="L77">        gbc.gridy = 4;</span>
+<span class="fc" id="L78">        gbc.gridwidth = 2;</span>
+<span class="fc" id="L79">        gbc.fill = GridBagConstraints.BOTH;</span>
+<span class="fc" id="L80">        add(scrollPane, gbc);</span>
+
+        // Submit Button
+<span class="fc" id="L83">        JButton submitButton = new JButton(&quot;Find Best Plans&quot;);</span>
+<span class="fc" id="L84">        gbc.gridx = 0;</span>
+<span class="fc" id="L85">        gbc.gridy = 5;</span>
+<span class="fc" id="L86">        gbc.gridwidth = 2;</span>
+<span class="fc" id="L87">        gbc.fill = GridBagConstraints.NONE;</span>
+<span class="fc" id="L88">        add(submitButton, gbc);</span>
+
+        // Action Listener for submit button
+<span class="fc" id="L91">        submitButton.addActionListener(e -&gt; {</span>
+            try {
+<span class="nc" id="L93">                double budget = Double.parseDouble(budgetField.getText().trim().replaceAll(&quot;\\$&quot;, &quot;&quot;));</span>
+<span class="nc" id="L94">                double data = Double.parseDouble(dataField.getText().trim().replaceAll(&quot;GB&quot;, &quot;&quot;));</span>
+<span class="nc" id="L95">                String featureInput = featureField.getText().trim();</span>
+
+<span class="nc" id="L97">                List&lt;String&gt; selectedFeatures = parseFeatures(featureInput);</span>
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                if (validateInput(budget, data, featureInput)) {</span>
+<span class="nc" id="L100">                    List&lt;Package&gt; recommendations = recommender.recommendTopK(data, budget, selectedFeatures);</span>
+<span class="nc" id="L101">                    displayRecommendations(recommendations);</span>
+                }
+<span class="nc" id="L103">            } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L104">                JOptionPane.showMessageDialog(this,</span>
+                        &quot;Please enter valid numbers for budget and data amount&quot;,
+                        &quot;Input Error&quot;,
+                        JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L108">            }</span>
+<span class="nc" id="L109">        });</span>
+<span class="fc" id="L110">    }</span>
+    //dealing with the CSV file
+    private void loadPlansFromCSV() {
+<span class="fc" id="L113">        try (InputStream is = getClass().getClassLoader().getResourceAsStream(&quot;mobile_plans.csv&quot;);</span>
+<span class="fc" id="L114">             BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {</span>
+
+<span class="fc" id="L116">            System.out.println(&quot;start loading file...&quot;);</span>
+            String line;
+<span class="fc" id="L118">            boolean firstLine = true;</span>
+<span class="fc" id="L119">            Map&lt;String, Integer&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L120">            int count = 0;</span>
+
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            while ((line = reader.readLine()) != null) {</span>
+<span class="fc" id="L123">                List&lt;String&gt; values = parseCSVLine(line);</span>
+
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                if (firstLine) {</span>
+                    // dealing with the header,record the index of each column
+<span class="fc bfc" id="L127" title="All 2 branches covered.">                    for (int i = 0; i &lt; values.size(); i++) {</span>
+<span class="fc" id="L128">                        headers.put(values.get(i).trim().toLowerCase(), i);</span>
+                    }
+<span class="fc" id="L130">                    System.out.println(&quot;Header: &quot; + headers);</span>
+<span class="fc" id="L131">                    firstLine = false;</span>
+<span class="fc" id="L132">                    continue;</span>
+                }
+
+                try {
+                    // get the basic info
+<span class="fc" id="L137">                    String brand = getValue(values, headers, &quot;brand&quot;);</span>
+<span class="fc" id="L138">                    String name = getValue(values, headers, &quot;plan name&quot;);</span>
+<span class="fc" id="L139">                    double price = parsePrice(getValue(values, headers, &quot;plan cost&quot;));</span>
+<span class="fc" id="L140">                    double data = parseData(getValue(values, headers, &quot;data&quot;));</span>
+
+                    // collect features
+<span class="fc" id="L143">                    List&lt;String&gt; features = new ArrayList&lt;&gt;();</span>
+
+                    // check the string if it's contains the word -- unlimited
+<span class="fc" id="L146">                    String talkTime = getValue(values, headers, &quot;talk time&quot;);</span>
+<span class="fc" id="L147">                    String textTime = getValue(values, headers, &quot;text time&quot;);</span>
+
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                    if (talkTime.toLowerCase().contains(&quot;unlimited&quot;)) {</span>
+<span class="fc" id="L150">                        features.add(&quot;Unlimited Talk Time&quot;);</span>
+                    }
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                    if (textTime.toLowerCase().contains(&quot;unlimited&quot;)) {</span>
+<span class="fc" id="L153">                        features.add(&quot;Unlimited Text&quot;);</span>
+                    }
+
+                    // exam other features
+<span class="fc" id="L157">                    String internationalCall = getValue(values, headers, &quot;international call time&quot;);</span>
+<span class="fc" id="L158">                    String roaming = getValue(values, headers, &quot;roaming&quot;);</span>
+<span class="fc" id="L159">                    String discount = getValue(values, headers, &quot;discount&quot;);</span>
+
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                    if (!internationalCall.isEmpty()) {</span>
+<span class="nc" id="L162">                        features.add(&quot;International Calls&quot;);</span>
+                    }
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    if (!roaming.isEmpty()) {</span>
+<span class="fc" id="L165">                        features.add(&quot;Roaming&quot;);</span>
+                    }
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                    if (!discount.isEmpty()) {</span>
+<span class="fc" id="L168">                        features.add(&quot;Discount&quot;);</span>
+                    }
+
+                    // insert the plan
+<span class="fc" id="L172">                    System.out.println(&quot;\ndealing the package: &quot; + name);</span>
+<span class="fc" id="L173">                    System.out.println(&quot;Brand: &quot; + brand);</span>
+<span class="fc" id="L174">                    System.out.println(&quot;Price: $&quot; + price);</span>
+<span class="fc" id="L175">                    System.out.println(&quot;Data: &quot; + data + &quot;GB&quot;);</span>
+<span class="fc" id="L176">                    System.out.println(&quot;Features: &quot; + features);</span>
+
+<span class="fc" id="L178">                    recommender.addPackage(new Package(name,brand, data, price, features));</span>
+<span class="fc" id="L179">                    count++;</span>
+
+<span class="nc" id="L181">                } catch (Exception e) {</span>
+<span class="nc" id="L182">                    System.out.println(&quot;error occur when dealing with the column: &quot; + line);</span>
+<span class="nc" id="L183">                    System.out.println(&quot;false info: &quot; + e.getMessage());</span>
+<span class="nc" id="L184">                    e.printStackTrace();</span>
+<span class="fc" id="L185">                }</span>
+<span class="fc" id="L186">            }</span>
+
+<span class="fc" id="L188">            System.out.println(&quot;\nFinish the loading of the csv file，success loading &quot; + count + &quot; records&quot;);</span>
+<span class="fc" id="L189">            recommender.printAllPackages();</span>
+
+<span class="nc" id="L191">        } catch (IOException e) {</span>
+<span class="nc" id="L192">            System.out.println(&quot;Error occurs when loading the csv file :&quot;);</span>
+<span class="nc" id="L193">            e.printStackTrace();</span>
+<span class="fc" id="L194">        }</span>
+<span class="fc" id="L195">    }</span>
+
+    //  get the value of a column from the given csv file, if it's &quot;-&quot; then return null
+    private String getValue(List&lt;String&gt; values, Map&lt;String, Integer&gt; headers, String columnName) {
+<span class="fc" id="L199">        Integer index = headers.get(columnName.toLowerCase());</span>
+<span class="pc bpc" id="L200" title="1 of 4 branches missed.">        if (index != null &amp;&amp; index &lt; values.size()) {</span>
+<span class="fc" id="L201">            String value = values.get(index).trim();</span>
+            // remove quotation marks
+<span class="fc" id="L203">            value = value.replaceAll(&quot;^\&quot;|\&quot;$&quot;, &quot;&quot;);</span>
+<span class="fc" id="L204">            return value;</span>
+        }
+<span class="fc" id="L206">        return &quot;&quot;;</span>
+    }
+   // dealing with the price info
+    private double parsePrice(String price) {
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (price.isEmpty()) return 0.0;</span>
+
+<span class="fc" id="L212">        System.out.println(&quot;analysing: &quot; + price);</span>
+        try {
+            // find the number part first then remove the &quot;/mo.&quot; part
+<span class="fc" id="L215">            String[] parts = price.split(&quot;/&quot;);</span>
+<span class="fc" id="L216">            String numberPart = parts[0].replace(&quot;$&quot;, &quot;&quot;).trim();</span>
+<span class="fc" id="L217">            System.out.println(&quot;number part: &quot; + numberPart);</span>
+<span class="fc" id="L218">            return Double.parseDouble(numberPart);</span>
+<span class="nc" id="L219">        } catch (Exception e) {</span>
+<span class="nc" id="L220">            System.out.println(&quot;fail to analysis: &quot; + price);</span>
+<span class="nc" id="L221">            return 0.0;</span>
+        }
+    }
+    //dealing with the data info
+    private double parseData(String data) {
+<span class="pc bpc" id="L226" title="2 of 8 branches missed.">        if (data == null || data.isEmpty() || (data.toLowerCase().contains(&quot;no data&quot;) &amp;&amp; !data.equals(&quot;Unlimited&quot;))) {</span>
+<span class="fc" id="L227">            return 0.0;</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        }else if (data.equals(&quot;Unlimited&quot;)){</span>
+<span class="fc" id="L229">            return Double.POSITIVE_INFINITY;</span>
+        }
+
+<span class="fc" id="L232">        System.out.println(&quot;analysing: &quot; + data);</span>
+        try {
+            // using regular expression to match the number with GB/MB
+<span class="fc" id="L235">            Pattern pattern = Pattern.compile(&quot;(\\d+(?:\\.\\d+)?)[\\s]*(GB|MB)&quot;, Pattern.CASE_INSENSITIVE);</span>
+<span class="fc" id="L236">            Matcher matcher = pattern.matcher(data);</span>
+
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            if (matcher.find()) {</span>
+<span class="fc" id="L239">                double amount = Double.parseDouble(matcher.group(1));</span>
+<span class="fc" id="L240">                String unit = matcher.group(2).toLowerCase();</span>
+
+                // if it's MB,convert it to GB
+<span class="fc bfc" id="L243" title="All 2 branches covered.">                if (unit.equals(&quot;mb&quot;)) {</span>
+<span class="fc" id="L244">                    amount = amount / 1024;</span>
+                }
+
+<span class="fc" id="L247">                System.out.println(&quot;The result of analysis: &quot; + amount + &quot; GB&quot;);</span>
+<span class="fc" id="L248">                return amount;</span>
+            }
+
+<span class="fc" id="L251">            System.out.println(&quot;can't find the valid data amount，return 0&quot;);</span>
+<span class="fc" id="L252">            return 0.0;</span>
+<span class="nc" id="L253">        } catch (Exception e) {</span>
+<span class="nc" id="L254">            System.out.println(&quot;fail to analysis data: &quot; + data);</span>
+<span class="nc" id="L255">            return 0.0;</span>
+        }
+    }
+
+    //analysis a row from csv file
+    private List&lt;String&gt; parseCSVLine(String line) {
+<span class="fc" id="L261">        List&lt;String&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L262">        boolean inQuotes = false;</span>
+<span class="fc" id="L263">        StringBuilder field = new StringBuilder();</span>
+
+<span class="fc bfc" id="L265" title="All 2 branches covered.">        for (char c : line.toCharArray()) {</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">            if (c == '&quot;') {</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">                inQuotes = !inQuotes;</span>
+<span class="pc bpc" id="L268" title="1 of 4 branches missed.">            } else if (c == ',' &amp;&amp; !inQuotes) {</span>
+<span class="fc" id="L269">                result.add(field.toString().trim());</span>
+<span class="fc" id="L270">                field = new StringBuilder();</span>
+            } else {
+<span class="fc" id="L272">                field.append(c);</span>
+            }
+        }
+<span class="fc" id="L275">        result.add(field.toString().trim());</span>
+<span class="fc" id="L276">        return result;</span>
+    }
+
+
+    private List&lt;String&gt; parseFeatures(String input) {
+<span class="fc" id="L281">        List&lt;String&gt; features = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">        if (!input.isEmpty()) {</span>
+<span class="fc" id="L283">            String[] numbers = input.split(&quot;,&quot;);</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            for (String number : numbers) {</span>
+<span class="pc bpc" id="L285" title="3 of 6 branches missed.">                switch (number.trim()) {</span>
+<span class="fc" id="L286">                    case &quot;1&quot; -&gt; features.add(&quot;Unlimited Talk Time&quot;);</span>
+<span class="fc" id="L287">                    case &quot;2&quot; -&gt; features.add(&quot;Unlimited Text&quot;);</span>
+<span class="fc" id="L288">                    case &quot;3&quot; -&gt; features.add(&quot;International Calls&quot;);</span>
+<span class="nc" id="L289">                    case &quot;4&quot; -&gt; features.add(&quot;Roaming&quot;);</span>
+<span class="nc" id="L290">                    case &quot;5&quot; -&gt; features.add(&quot;Discount&quot;);</span>
+                }
+            }
+        }
+<span class="fc" id="L294">        return features;</span>
+    }
+
+    // validate the input
+    private boolean validateInput(double budget, double data, String features) {
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        if (budget &lt;= 0) {</span>
+<span class="fc" id="L300">            JOptionPane.showMessageDialog(this,</span>
+                    &quot;Budget must be positive numbers&quot;,
+                    &quot;Input Error&quot;,
+                    JOptionPane.ERROR_MESSAGE);
+<span class="fc" id="L304">            return false;</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">        }else if(data &lt; 0){</span>
+<span class="fc" id="L306">            JOptionPane.showMessageDialog(this,</span>
+                    &quot;Data must be zero or positive numbers&quot;,
+                    &quot;Input Error&quot;,
+                    JOptionPane.ERROR_MESSAGE);
+<span class="fc" id="L310">            return false;</span>
+        }
+
+<span class="pc bpc" id="L313" title="1 of 4 branches missed.">        if (!features.isEmpty() &amp;&amp; !features.matches(&quot;^[1-5](,[1-5])*$&quot;)) {</span>
+<span class="fc" id="L314">            JOptionPane.showMessageDialog(this,</span>
+                    &quot;Please enter valid feature numbers (1-5) separated by commas&quot;,
+                    &quot;Input Error&quot;,
+                    JOptionPane.ERROR_MESSAGE);
+<span class="fc" id="L318">            return false;</span>
+        }
+
+<span class="fc" id="L321">        return true;</span>
+    }
+
+    private void displayRecommendations(List&lt;Package&gt; recommendations) {
+<span class="nc" id="L325">        StringBuilder output = new StringBuilder();</span>
+<span class="nc" id="L326">        output.append(&quot;Recommended Plans:\n\n&quot;);</span>
+
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        for (int i = 0; i &lt; recommendations.size(); i++) {</span>
+<span class="nc" id="L329">            Package plan = recommendations.get(i);</span>
+<span class="nc" id="L330">            output.append(String.format(&quot;Recommendation #%d:\n&quot;, i + 1));</span>
+<span class="nc" id="L331">            output.append(String.format(&quot;Brand: %s\n&quot;, plan.getBrand()));</span>
+<span class="nc" id="L332">            output.append(String.format(&quot;Plan: %s\n&quot;, plan.getName()));</span>
+<span class="nc" id="L333">            output.append(String.format(&quot;Data: %.1f GB\n&quot;, plan.getDataLimit()));</span>
+<span class="nc" id="L334">            output.append(String.format(&quot;Price: $%.2f/month\n&quot;, plan.getPrice()));</span>
+<span class="nc" id="L335">            output.append(&quot;Features: &quot;).append(String.join(&quot;, &quot;, plan.getFeatures())).append(&quot;\n\n&quot;);</span>
+        }
+
+<span class="nc" id="L338">        outputArea.setText(output.toString());</span>
+<span class="nc" id="L339">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

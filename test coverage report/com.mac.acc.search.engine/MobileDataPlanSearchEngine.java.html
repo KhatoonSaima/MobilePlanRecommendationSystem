@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MobileDataPlanSearchEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">final-project</a> &gt; <a href="index.source.html" class="el_package">com.mac.acc.search.engine</a> &gt; <span class="el_source">MobileDataPlanSearchEngine.java</span></div><h1>MobileDataPlanSearchEngine.java</h1><pre class="source lang-java linenums">package com.mac.acc.search.engine;
+
+import com.mac.acc.search.Document;
+import com.mac.acc.search.Field;
+import com.mac.acc.search.engine.exception.InvalidSearchFieldException;
+import com.mac.acc.search.engine.exception.SearchEngineException;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.IntStream;
+
+/**
+ * Implementation of the SearchEngine interface specialized for mobile data plan search.
+ * Provides advanced search capabilities with support for tight and loose field conditions.
+ *
+ * @author Weiming Zheng (main contributor) with Chandravallika Murarisetty (contributed to the lines of code for Page Ranking from 192 to 203)
+ * @since 2024-11-30
+ */
+<span class="fc" id="L20">@Slf4j</span>
+public class MobileDataPlanSearchEngine implements SearchEngine {
+    private final List&lt;Document&gt; documents;
+    private final Trie rawCaseInvertedIndex;
+    private final Trie lowerCaseInvertedIndex;
+    private static final int MAX_FIELDS = 5;
+
+<span class="fc" id="L27">    public MobileDataPlanSearchEngine(List&lt;Document&gt; documents) {</span>
+<span class="fc" id="L28">        validateDocuments(documents);</span>
+
+<span class="fc" id="L30">        log.info(&quot;Initializing MobileDataPlanSearchEngine with {} documents&quot;, documents.size());</span>
+<span class="fc" id="L31">        this.documents = new ArrayList&lt;&gt;(documents); // Defensive copy</span>
+<span class="fc" id="L32">        this.rawCaseInvertedIndex = new InvertedIndex(documents.size());</span>
+<span class="fc" id="L33">        this.lowerCaseInvertedIndex = new InvertedIndex(documents.size());</span>
+
+        try {
+<span class="fc" id="L36">            buildIndices();</span>
+<span class="nc" id="L37">        } catch (Exception e) {</span>
+<span class="nc" id="L38">            throw new SearchEngineException(&quot;Failed to build search indices&quot;, e);</span>
+<span class="fc" id="L39">        }</span>
+<span class="fc" id="L40">    }</span>
+
+    private void validateDocuments(List&lt;Document&gt; documents) {
+<span class="pc bpc" id="L43" title="2 of 4 branches missed.">        if (documents == null || documents.isEmpty()) {</span>
+<span class="nc" id="L44">            throw new SearchEngineException(&quot;Document list cannot be null or empty&quot;);</span>
+        }
+
+        // Check for duplicate documents
+<span class="fc" id="L48">        Set&lt;Document&gt; uniqueDocs = new HashSet&lt;&gt;(documents);</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (uniqueDocs.size() != documents.size()) {</span>
+<span class="nc" id="L50">            throw new SearchEngineException(&quot;Duplicate documents detected in input&quot;);</span>
+        }
+
+        // Validate individual documents
+<span class="fc" id="L54">        documents.forEach(doc -&gt; {</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">            if (doc == null) {</span>
+<span class="nc" id="L56">                throw new SearchEngineException(&quot;Null document detected in input&quot;);</span>
+            }
+<span class="pc bpc" id="L58" title="2 of 4 branches missed.">            if (doc.getPath() == null || doc.getUrl() == null) {</span>
+<span class="nc" id="L59">                throw new SearchEngineException(</span>
+                        &quot;Invalid document detected: path and url must not be null&quot;);
+            }
+<span class="fc" id="L62">        });</span>
+<span class="fc" id="L63">    }</span>
+
+    private void buildIndices() {
+<span class="fc" id="L66">        IntStream.range(0, documents.size()).forEach(i -&gt; {</span>
+<span class="fc" id="L67">            List&lt;String&gt; words = documents.get(i).extractWords();</span>
+<span class="fc" id="L68">            log.debug(&quot;Indexing document {}: {} words extracted&quot;, i, words.size());</span>
+
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">            if (words.isEmpty()) {</span>
+<span class="nc" id="L71">                log.warn(&quot;Document {} contains no indexable words&quot;, documents.get(i).getUrl());</span>
+            }
+
+<span class="fc" id="L74">            words.forEach(word -&gt; {</span>
+                try {
+<span class="fc" id="L76">                    rawCaseInvertedIndex.insert(word, i);</span>
+<span class="fc" id="L77">                    lowerCaseInvertedIndex.insert(word.toLowerCase(), i);</span>
+<span class="nc" id="L78">                } catch (Exception e) {</span>
+<span class="nc" id="L79">                    throw new SearchEngineException(</span>
+<span class="nc" id="L80">                            String.format(&quot;Failed to index word '%s' for document %d&quot;, word, i), e);</span>
+<span class="fc" id="L81">                }</span>
+<span class="fc" id="L82">            });</span>
+<span class="fc" id="L83">        });</span>
+<span class="fc" id="L84">    }</span>
+
+    @Override
+    public List&lt;Entry&lt;String, Integer&gt;&gt; search(List&lt;Field&gt; fields) {
+<span class="pc bpc" id="L88" title="2 of 4 branches missed.">        if (fields == null || fields.isEmpty()) return new ArrayList&lt;&gt;();</span>
+
+        // Validate search fields
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        if (fields.size() &gt; MAX_FIELDS) {</span>
+<span class="nc" id="L92">            throw new InvalidSearchFieldException(</span>
+<span class="nc" id="L93">                    String.format(&quot;Too many search fields. Maximum %d fields allowed&quot;, MAX_FIELDS));</span>
+        }
+
+<span class="fc" id="L96">        log.info(&quot;Processing search with {} fields&quot;, fields.size());</span>
+
+        try {
+            // Step 1: Generate word-level vectors for each field
+<span class="fc" id="L100">            List&lt;List&lt;List&lt;Integer&gt;&gt;&gt; regularVectorsInFields = fields.stream()</span>
+<span class="fc" id="L101">                    .peek(field -&gt; {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                        if (!field.isCaseSensitive()) {</span>
+<span class="fc" id="L103">                            String original = field.getValue();</span>
+<span class="fc" id="L104">                            field.setValue(field.getValue().toLowerCase());</span>
+<span class="fc" id="L105">                            log.debug(&quot;Converting field '{}' to lowercase: '{}'&quot;, original, field.getValue());</span>
+                        }
+<span class="fc" id="L107">                    })</span>
+<span class="fc" id="L108">                    .map(field -&gt; {</span>
+<span class="fc" id="L109">                        log.debug(&quot;Processing field: value='{}', scope={}, caseSensitive={}&quot;,</span>
+<span class="fc" id="L110">                                field.getValue(), field.getScope(), field.isCaseSensitive());</span>
+
+                        // Split field value into words and get frequency vectors
+<span class="fc" id="L113">                        List&lt;List&lt;Integer&gt;&gt; wordVectors = Arrays.stream(field.getValue().split(&quot; &quot;))</span>
+<span class="fc" id="L114">                                .map(word -&gt; {</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">                                    List&lt;Integer&gt; vector = field.isCaseSensitive() ?</span>
+<span class="fc" id="L116">                                            rawCaseInvertedIndex.query(word) :</span>
+<span class="fc" id="L117">                                            lowerCaseInvertedIndex.query(word);</span>
+<span class="fc" id="L118">                                    log.trace(&quot;Word '{}' vector generated&quot;, word);</span>
+<span class="fc" id="L119">                                    return vector;</span>
+                                })
+<span class="fc" id="L121">                                .toList();</span>
+
+<span class="fc" id="L123">                        log.debug(&quot;Field '{}' generated {} word vectors&quot;, field.getValue(), wordVectors.size());</span>
+<span class="fc" id="L124">                        return wordVectors;</span>
+<span class="fc" id="L125">                    }).toList();</span>
+
+            // Step 2: Generate mask vectors to enforce tight field conditions
+<span class="fc" id="L128">            List&lt;List&lt;Integer&gt;&gt; maskVectors = regularVectorsInFields.stream()</span>
+<span class="fc" id="L129">                    .map(vectors -&gt; {</span>
+<span class="fc" id="L130">                        List&lt;Integer&gt; mask = VectorUtil.computeMaskVector(vectors);</span>
+<span class="fc" id="L131">                        log.debug(&quot;Mask vector computed with {} elements&quot;, mask.size());</span>
+<span class="fc" id="L132">                        return mask;</span>
+                    })
+<span class="fc" id="L134">                    .toList();</span>
+
+            // Step 3: Calculate field-level vectors combining word frequencies and masks
+<span class="fc" id="L137">            List&lt;List&lt;Integer&gt;&gt; fieldVectors = IntStream.range(0, fields.size())</span>
+<span class="fc" id="L138">                    .mapToObj(i -&gt; {</span>
+<span class="fc" id="L139">                        List&lt;List&lt;Integer&gt;&gt; regularVectors = regularVectorsInFields.get(i);</span>
+<span class="fc" id="L140">                        List&lt;Integer&gt; maskVector = maskVectors.get(i);</span>
+<span class="fc" id="L141">                        List&lt;Integer&gt; fieldVector = VectorUtil.multiply(</span>
+<span class="fc" id="L142">                                VectorUtil.sigma(regularVectors),</span>
+                                maskVector
+                        );
+<span class="fc" id="L145">                        log.debug(&quot;Field {} vector computed&quot;, i);</span>
+<span class="fc" id="L146">                        return fieldVector;</span>
+<span class="fc" id="L147">                    }).toList();</span>
+
+            // Step 4: Process tight condition fields - all words must appear
+<span class="fc" id="L150">            List&lt;Integer&gt; tightVectorResult = IntStream.range(0, fields.size())</span>
+<span class="fc" id="L151">                    .mapToObj(i -&gt; {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                        if (fields.get(i).getScope().equals(FieldCondition.TIGHT)) {</span>
+<span class="fc" id="L153">                            log.debug(&quot;Processing tight field {}&quot;, i);</span>
+<span class="fc" id="L154">                            return fieldVectors.get(i);</span>
+                        }
+<span class="fc" id="L156">                        return null;</span>
+                    })
+<span class="fc" id="L158">                    .filter(Objects::nonNull)</span>
+<span class="fc" id="L159">                    .reduce(new ArrayList&lt;&gt;(Collections.nCopies(documents.size(), 0)), VectorUtil::plus);</span>
+
+            // Step 5: Process loose condition fields - any matching word increases relevance
+<span class="fc" id="L162">            List&lt;Integer&gt; looseVectorResult = IntStream.range(0, fields.size())</span>
+<span class="fc" id="L163">                    .mapToObj(i -&gt; {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                        if (fields.get(i).getScope().equals(FieldCondition.LOOSE)) {</span>
+<span class="fc" id="L165">                            log.debug(&quot;Processing loose field {}&quot;, i);</span>
+<span class="fc" id="L166">                            return fieldVectors.get(i);</span>
+                        }
+<span class="fc" id="L168">                        return null;</span>
+                    })
+<span class="fc" id="L170">                    .filter(Objects::nonNull)</span>
+<span class="fc" id="L171">                    .reduce(new ArrayList&lt;&gt;(Collections.nCopies(documents.size(), 0)), VectorUtil::plus);</span>
+
+            // Step 6: Generate final mask for tight conditions
+<span class="fc" id="L174">            List&lt;Integer&gt; tightMaskVectorResult = IntStream.range(0, fields.size())</span>
+<span class="fc" id="L175">                    .mapToObj(i -&gt; {</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">                        if (fields.get(i).getScope().equals(FieldCondition.TIGHT)) {</span>
+<span class="fc" id="L177">                            log.debug(&quot;Including mask vector for tight field {}&quot;, i);</span>
+<span class="fc" id="L178">                            return maskVectors.get(i);</span>
+                        }
+<span class="fc" id="L180">                        return null;</span>
+                    })
+<span class="fc" id="L182">                    .filter(Objects::nonNull)</span>
+<span class="fc" id="L183">                    .reduce(new ArrayList&lt;&gt;(Collections.nCopies(documents.size(), 1)), VectorUtil::multiply);</span>
+
+            // Step 7: Combine results: (tight_results * tight_mask) + loose_results
+<span class="fc" id="L186">            List&lt;Integer&gt; finalResults = VectorUtil.plus(</span>
+<span class="fc" id="L187">                    VectorUtil.multiply(tightVectorResult, tightMaskVectorResult),</span>
+                    looseVectorResult
+            );
+<span class="fc" id="L190">            log.info(&quot;Search computation complete, ranking results&quot;);</span>
+
+            // Step 8: Create ranked result list (Credit to Chandravallika Murarisetty's Page Ranking implementation)
+<span class="fc" id="L193">            return IntStream.range(0, documents.size())</span>
+<span class="fc" id="L194">                    .mapToObj(i -&gt; {</span>
+<span class="fc" id="L195">                        Entry&lt;String, Integer&gt; entry = new AbstractMap.SimpleImmutableEntry&lt;&gt;(</span>
+<span class="fc" id="L196">                                documents.get(i).getUrl(),</span>
+<span class="fc" id="L197">                                finalResults.get(i));</span>
+<span class="fc" id="L198">                        log.debug(&quot;Document {} score: {}&quot;, documents.get(i).getUrl(), finalResults.get(i));</span>
+<span class="fc" id="L199">                        return entry;</span>
+                    })
+<span class="fc bfc" id="L201" title="All 2 branches covered.">                    .filter(entry -&gt; entry.getValue() &gt; 0)</span>
+<span class="fc" id="L202">                    .sorted(Comparator.&lt;Entry&lt;String, Integer&gt;&gt;comparingInt(Entry::getValue).reversed())</span>
+<span class="fc" id="L203">                    .toList();</span>
+
+<span class="nc" id="L205">        } catch (Exception e) {</span>
+<span class="nc" id="L206">            throw new SearchEngineException(&quot;Error during search operation&quot;, e);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
