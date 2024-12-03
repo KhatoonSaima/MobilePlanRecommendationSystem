@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
  * Implementation of the SearchEngine interface specialized for mobile data plan search.
  * Provides advanced search capabilities with support for tight and loose field conditions.
  *
- * @author Weiming Zheng
+ * @author Weiming Zheng (main contributor) with Chandravallika Murarisetty (contributed to the lines of code for Page Ranking from 192 to 203)
  * @since 2024-11-30
  */
 @Slf4j
@@ -189,7 +189,7 @@ public class MobileDataPlanSearchEngine implements SearchEngine {
             );
             log.info("Search computation complete, ranking results");
 
-            // Step 8: Create ranked result list
+            // Step 8: Create ranked result list (Credit to Chandravallika Murarisetty's Page Ranking implementation)
             return IntStream.range(0, documents.size())
                     .mapToObj(i -> {
                         Entry<String, Integer> entry = new AbstractMap.SimpleImmutableEntry<>(

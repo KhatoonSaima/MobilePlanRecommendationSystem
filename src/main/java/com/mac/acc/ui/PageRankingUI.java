@@ -7,75 +7,161 @@ import com.mac.acc.search.engine.SearchEngine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class PageRankingUI {
+    private static class SearchField {
+        JTextField searchBox;
+        JToggleButton scopeButton;
+        JToggleButton caseButton;
+
+        public SearchField() {
+            searchBox = new JTextField(30);
+            scopeButton = new JToggleButton("Tight");
+            caseButton = new JToggleButton("Case-insensitive");
+
+            // Configure toggle buttons
+            scopeButton.addActionListener(e ->
+                    scopeButton.setText(scopeButton.isSelected() ? "Loose" : "Tight"));
+            caseButton.addActionListener(e ->
+                    caseButton.setText(caseButton.isSelected() ? "Case-sensitive" : "Case-insensitive"));
+        }
+    }
 
     public static JPanel createPanel() {
-        JPanel pageRankingPanel = new JPanel(new FlowLayout());
-        JTextField pageRankingField = new JTextField(30);
-        JButton pageRankingButton = new JButton("Rank Pages");
-        pageRankingPanel.add(new JLabel("Page Ranking:"));
-        pageRankingPanel.add(pageRankingField);
-        pageRankingPanel.add(pageRankingButton);
+        JPanel pageRankingPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Field names
+        String[] fieldNames = {
+                "Plan details", "Data allowance", "Additional feature",
+                "Family plan & discounts", "Overcharge fees"
+        };
+
+        // Create search fields
+        List<SearchField> searchFields = new ArrayList<>();
+
+        // Add header labels
+        gbc.gridy = 0;
+        gbc.gridx = 0; addHeaderLabel(pageRankingPanel, "Field Name", gbc);
+        gbc.gridx = 1; addHeaderLabel(pageRankingPanel, "Search Box", gbc);
+        gbc.gridx = 2; addHeaderLabel(pageRankingPanel, "Scope", gbc);
+        gbc.gridx = 3; addHeaderLabel(pageRankingPanel, "Case Sensitivity", gbc);
+
+        // Add fields
+        for (int i = 0; i < fieldNames.length; i++) {
+            gbc.gridy = i + 1;
+            SearchField field = new SearchField();
+            searchFields.add(field);
+
+            gbc.gridx = 0;
+            pageRankingPanel.add(new JLabel(fieldNames[i]), gbc);
+
+            gbc.gridx = 1;
+            pageRankingPanel.add(field.searchBox, gbc);
+
+            gbc.gridx = 2;
+            pageRankingPanel.add(field.scopeButton, gbc);
+
+            gbc.gridx = 3;
+            pageRankingPanel.add(field.caseButton, gbc);
+        }
 
         // Output Area
         JTextArea outputArea = new JTextArea(20, 60);
+        outputArea.setEditable(false);
         outputArea.setLineWrap(true);
         outputArea.setWrapStyleWord(true);
         outputArea.setBorder(BorderFactory.createTitledBorder("Page Ranking with Frequency Count: "));
-        pageRankingPanel.add(new JScrollPane(outputArea), BorderLayout.SOUTH);
-        JScrollPane scrollPane = new JScrollPane(outputArea);
-        pageRankingPanel.add(scrollPane);
 
-
-        pageRankingButton.addActionListener(e -> {
-            String input = pageRankingField.getText().trim();
-            if (input.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Please enter a word for page ranking!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                String rankingResult = rankPage(input);
-                outputArea.setText(rankingResult);
-                //JOptionPane.showMessageDialog(null, "Page ranking for \"" + input + "\": [ranking logic]", "Info", JOptionPane.INFORMATION_MESSAGE);
+        // Rank Pages button
+        JButton rankButton = new JButton("Search");
+        rankButton.addActionListener(e -> {
+            List<Field> searchCriteria = new ArrayList<>();
+            for (SearchField field : searchFields) {
+                String searchText = field.searchBox.getText().trim();
+                if (!searchText.isEmpty()) {
+                    FieldCondition scope = field.scopeButton.isSelected() ?
+                            FieldCondition.LOOSE : FieldCondition.TIGHT;
+                    boolean caseSensitive = field.caseButton.isSelected();
+                    searchCriteria.add(new Field(searchText, scope, caseSensitive));
+                }
             }
+
+            if (searchCriteria.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please enter at least one search term",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String rankingResult = performRanking(searchCriteria);
+            outputArea.setText(rankingResult);
         });
+
+        // Add button and output area
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 4;
+        pageRankingPanel.add(rankButton, gbc);
+
+        gbc.gridy++;
+        pageRankingPanel.add(new JScrollPane(outputArea), gbc);
 
         return pageRankingPanel;
     }
 
-    public static String rankPage(String input) {
-        List<Document> testDocuments = Arrays.asList(
-                new Document(Path.of("docs/public-mobile.html"),
-                        "https://www.publicmobile.ca/en/on/plans"),
-                new Document(Path.of("docs/fido-byod.html"),
-//                        "https://www.fido.ca/phones/bring-your-own-device?flowType=byod"),
-                        "https://www.fido.ca/phones/bring-your-own-device?icid=F_WIR_CNV_GRM6LG&flowType=byod&step=2&data=sku_plan_FPMM012JE_FPMM012JE&sku=BYOD&tier=NOTERM&talk=sku_plan_FPMM012JE_FPMM012JE"),
-                new Document(Path.of("docs/rogers-plans.html"),
-                        "https://www.rogers.com/plans"),
-                new Document(Path.of("docs/rogers-family.html"),
-                        "https://www.rogers.com/mobility/family-phones"),
-                new Document(Path.of("docs/verizon-unlimited.html"),
-                        "https://www.verizon.com/plans/unlimited/"),
-                new Document(Path.of("docs/verizon-prepaid.html"),
-                        "https://www.verizon.com/plans/prepaid/")
-        );
-        // code for page ranking
-        SearchEngine searchEngine = SearchEngineFactory.getSearchEngine(testDocuments);
+    private static void addHeaderLabel(JPanel panel, String text, GridBagConstraints gbc) {
+        JLabel label = new JLabel(text);
+        label.setFont(label.getFont().deriveFont(Font.BOLD));
+        panel.add(label, gbc);
+    }
+    private static String performRanking(List<Field> fields) {
+        List<Document> testDocuments = new ArrayList<>();
 
-        // Create a field with loose condition looking for "talk plan"
-        Field field = new Field(input, FieldCondition.LOOSE, false);
-        java.util.List<Map.Entry<String, Integer>> results = searchEngine.search(List.of(field));
+        try (InputStream is = PageRankingUI.class.getClassLoader().getResourceAsStream("URLs.txt");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
-        // Format the ranking results into a string
-        StringBuilder resultMessage = new StringBuilder();
-        for (Map.Entry<String, Integer> entry : results) {
-            resultMessage.append(entry.getKey()).append(" - Rank: ").append(entry.getValue()).append("\n");
+            String url;
+            int index = 1;
+            while ((url = reader.readLine()) != null) {
+                if (!url.trim().isEmpty()) {
+                    testDocuments.add(new Document(
+                            Path.of("docs/" + index + ".html"),
+                            url.trim()
+                    ));
+                    index++;
+                }
+            }
+
+            if (testDocuments.isEmpty()) {
+                return "No URLs found in configuration file";
+            }
+
+            SearchEngine searchEngine = SearchEngineFactory.getSearchEngine(testDocuments);
+            List<Map.Entry<String, Integer>> results = searchEngine.search(fields);
+
+            StringBuilder resultMessage = new StringBuilder();
+            for (Map.Entry<String, Integer> entry : results) {
+                resultMessage.append(entry.getKey())
+                        .append(" - Rank: ")
+                        .append(entry.getValue())
+                        .append("\n");
+            }
+
+            return resultMessage.toString();
+
+        } catch (IOException e) {
+            return "Error reading URLs configuration: " + e.getMessage();
         }
-
-        return resultMessage.toString();
     }
 }
-

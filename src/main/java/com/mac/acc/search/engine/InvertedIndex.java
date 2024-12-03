@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * Implementation of a Trie-based inverted index for efficient word lookup.
  * Stores word frequency counts for each document in the collection.
- * @author Weiming Zheng
+ * @author Weiming Zheng (Main contributor) with Saima Khatoon (contributed to line of code for Frequency Counts from 58 to 60)
  * @since 2024-11-30
  */
 @Slf4j
@@ -55,7 +55,7 @@ public class InvertedIndex implements Trie {
             freqCnts.set(u, new ArrayList<>(Collections.nCopies(n, 0)));
         }
 
-        // Increment frequency count for this word in the document
+        // Increment frequency count for this word in the document (credit to Saima Khatoon's Frequency Count implementation)
         List<Integer> counts = freqCnts.get(u);
         counts.set(documentNo, counts.get(documentNo) + 1);
     }

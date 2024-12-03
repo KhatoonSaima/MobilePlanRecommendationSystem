@@ -1,7 +1,6 @@
 package com.mac.acc.features;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class SpellChecker {
@@ -77,31 +76,36 @@ public class SpellChecker {
                 return dp[wordOneLen][wordTwolen]; // returns the edit distance
             }
 
-            // this method suggest similar words based on edit distance
-            public static ArrayList<String> suggestSimilarWords(Trie dictionary, String word, int maxSuggestions) {
-                ArrayList<String> altWords = new ArrayList<>();
-                // Loop through all the possible words in the dictionary (in this case, dictionary is a Trie)
-                suggestSimilarWordsHelper(dictionary.root, "", altWords, word, maxSuggestions);
-                return altWords;
-            }
+             //this method suggest similar words based on edit distance
+             public static List<String> suggestSimilarWords(Trie dictionary, String word, int maxSuggestions) {
+                 PriorityQueue<Map.Entry<String, Integer>> suggestions = new PriorityQueue<>(
+                         Comparator.comparingInt(Map.Entry::getValue) // Sort by edit distance
+                 );
+                 suggestSimilarWordsHelper(dictionary.root, "", suggestions, word);
 
-            // this is a helper functyion that will generate suggestions using trie (recursive depth first search approach)
-            private static void suggestSimilarWordsHelper(TrieNode node, String currentWord, ArrayList<String> altWords, String targetWord, int maxSuggestions) {
-                if (node == null || altWords.size() >= maxSuggestions) return;  // Stop if no node or max suggestions reached
+                 // Extract top suggestions
+                 List<String> altWords = new ArrayList<>();
+                 while (!suggestions.isEmpty() && altWords.size() < maxSuggestions) {
+                     altWords.add(suggestions.poll().getKey());
+                 }
+                 return altWords;
+             }
 
-                // once you reach the end of the word, check for the edit distance
+            //this is a helper functyion that will generate suggestions using trie (recursive depth first search approach)
+            private static void suggestSimilarWordsHelper(TrieNode node, String currentWord, PriorityQueue<Map.Entry<String, Integer>> suggestions, String targetWord) {
+                if (node == null) return;  // Stop if no node exists
+
+                // If the current word is complete, compute edit distance
                 if (node.isEndofWord) {
-                    int wordEditDistance = computeEditDistance(currentWord,targetWord);
-                    if (wordEditDistance <= 2) { // change depending on how close you want the similar words to be
-                        altWords.add(currentWord);
-                    }
+                    int wordEditDistance = computeEditDistance(currentWord, targetWord);
+                    suggestions.add(Map.entry(currentWord, wordEditDistance)); // Add word with its edit distance
                 }
 
-                // iterate through a-z to find all possible children
+                // Continue DFS traversal for all child nodes
                 for (char c = 'a'; c <= 'z'; c++) {
                     TrieNode nextNode = node.children[c - 'a'];
                     if (nextNode != null) {
-                        suggestSimilarWordsHelper(nextNode, currentWord + c, altWords, targetWord, maxSuggestions);
+                        suggestSimilarWordsHelper(nextNode, currentWord + c, suggestions, targetWord);
                     }
                 }
             }
