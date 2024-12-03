@@ -1,5 +1,0 @@
-Email: user@example.com
-Phone: 123-4567895
-Complaint: My internet is slow.
-----------------------------
-
