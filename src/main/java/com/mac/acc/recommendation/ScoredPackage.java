@@ -1,6 +1,7 @@
 package com.mac.acc.recommendation;
 
-// 需要确保明确指定类型参数
+// make sure it is designated type
+// put the score info into the packages
 public class ScoredPackage implements Comparable<ScoredPackage> {
     private double score;
     private com.mac.acc.recommendation.Package pkg;
@@ -15,7 +16,7 @@ public class ScoredPackage implements Comparable<ScoredPackage> {
 
     @Override
     public int compareTo(ScoredPackage other) {
-        // 确保参数类型匹配
+        // make sure the variables are the same types
         return Double.compare(this.score, other.score);
     }
 }
