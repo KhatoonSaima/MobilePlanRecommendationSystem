@@ -118,17 +118,21 @@ public class SearchBarUI {
         if (!input.isEmpty()) {
             List<String> completions = SearchBar.getWordCompletions(input);
             if (!completions.isEmpty()) {
-                // Limit to the closest 3 matches
+                // Create a new panel to hold the suggestion buttons horizontally
+                JPanel suggestionButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0)); // 10 px horizontal spacing
+
+                // Add the suggestion buttons to the new panel
                 completions.stream().limit(3).forEach(word -> {
                     JButton suggestionButton = new JButton(word);
-                    suggestionButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                     suggestionButton.addActionListener(e -> {
                         searchField.setText(word);  // Set selected suggestion in search field
                         suggestionsPanel.setVisible(false); // Hide suggestions after selection
                     });
-
-                    suggestionsPanel.add(suggestionButton);
+                    suggestionButtonPanel.add(suggestionButton);
                 });
+
+                // Add the suggestion button panel to the main suggestions panel
+                suggestionsPanel.add(suggestionButtonPanel);
                 suggestionsPanel.setVisible(true);
             } else {
                 suggestionsPanel.setVisible(false);
