@@ -95,8 +95,8 @@ public class SupportTab extends JPanel {
 
     // Method to validate phone numbers
     private boolean isValidPhoneNumber(String phoneNumber) {
-        // Regular expression for phone numbers (e.g., 1234567890, (123) 456-7890, +1 123 456 7890, etc.)
-        String phoneNumberRegex = "\\s*(?:\\+?(\\d{1,3}))?[-. (]*(\\d{3})[-. )]*(\\d{3})[-. ]*(\\d{4})(?: *x(\\d+))?\\s*";
+        // Regular expression for phone numbers (e.g., 1234567890, +918234567890, +91 8234567890, (123) 456-7890, +1 123 456 7890, 1-800-555-1234 etc.)
+        String phoneNumberRegex = "^(\\+\\d{1,2}\\s?)?1?-?\\.?\\s?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
         Pattern phonePattern = Pattern.compile(phoneNumberRegex);
         Matcher searchMatcher = phonePattern.matcher(phoneNumber);
         return searchMatcher.matches();
@@ -104,11 +104,10 @@ public class SupportTab extends JPanel {
 
     // Method to validate email addresses
     private boolean isValidEmailAddress(String emailAddress) {
-        // Regular expression for Email addresses
+        // Regular expression for Email addresses user123@example.com , user.name+tag@example.co.uk , user@sub-domain.example.com , user_name@example.net.
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$";
         Pattern emailPattern = Pattern.compile(emailRegex);
         Matcher searchMatcher = emailPattern.matcher(emailAddress);
-        //return emailAddress.matches(emailRegex);
         return searchMatcher.matches();
     }
 
