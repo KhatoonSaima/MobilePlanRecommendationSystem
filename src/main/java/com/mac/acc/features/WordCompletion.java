@@ -58,27 +58,25 @@ public class WordCompletion{
         List<String> completions = new ArrayList<>();
 
         NodeT curr = toproot;
-        int flag = 0;
         for (int i = 0; i < prex.length(); i++) {
-            int index = prex.charAt(i) - 'a';
-            if (curr.cld[index] != null) {
-                flag++;
-                curr = curr.cld[index];
-            }else{
-                return completions;
-                //out.println("Cannot find any word sart with “ "+ prex +" ”");
-                //break;
+            char c = prex.charAt(i);
+            // Check if the character is a valid lowercase letter
+            if (c < 'a' || c > 'z') {
+                System.out.println("Invalid input: prefix contains non-alphabetic character \"" + c + "\"");
+                return completions; // Return an empty list if invalid character found
             }
-
+            int index = c - 'a';
+            if (curr.cld[index] == null) {
+                return completions; // Return empty if prefix does not exist
+            }
+            curr = curr.cld[index];
         }
+
         // Collect all words starting from this node
         collectWords(curr, prex, completions);
         return completions;
-        /*
-        if(flag == prex.length()){
-            printHelper(curr, prex);
-        }*/
     }
+
 
     // Helper method to collect words recursively
     private void collectWords(NodeT node, String prex, List<String> completions) {
