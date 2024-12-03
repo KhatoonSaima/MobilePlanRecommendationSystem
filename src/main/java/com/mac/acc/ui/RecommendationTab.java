@@ -16,8 +16,8 @@ public class RecommendationTab extends JPanel {
 
     public RecommendationTab() {
         recommender = new PackageRecommender();
-        initializeUI();
-        loadPlansFromCSV();
+        initializeUI(); //UI
+        loadPlansFromCSV(); // INPUT
     }
 
     private void initializeUI() {
@@ -62,7 +62,7 @@ public class RecommendationTab extends JPanel {
                 "2. Unlimited Text<br>" +
                 "3. International Calls<br>" +
                 "4. Roaming<br>" +
-                "5. Automatic Payment Discount</html>"), gbc);
+                "5. Discount</html>"), gbc);
         JTextField featureField = new JTextField(20);
         gbc.gridx = 1;
         add(featureField, gbc);
@@ -108,12 +108,12 @@ public class RecommendationTab extends JPanel {
             }
         });
     }
-
+    //dealing with the CSV file
     private void loadPlansFromCSV() {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("mobile_plans.csv");
              BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
-            System.out.println("开始加载CSV文件...");
+            System.out.println("start loading file...");
             String line;
             boolean firstLine = true;
             Map<String, Integer> headers = new HashMap<>();
@@ -123,25 +123,26 @@ public class RecommendationTab extends JPanel {
                 List<String> values = parseCSVLine(line);
 
                 if (firstLine) {
-                    // 处理表头，记录每个列的索引
+                    // dealing with the header,record the index of each column
                     for (int i = 0; i < values.size(); i++) {
                         headers.put(values.get(i).trim().toLowerCase(), i);
                     }
-                    System.out.println("表头映射: " + headers);
+                    System.out.println("Header: " + headers);
                     firstLine = false;
                     continue;
                 }
 
                 try {
-                    // 获取基本信息
+                    // get the basic info
+                    String brand = getValue(values, headers, "brand");
                     String name = getValue(values, headers, "plan name");
                     double price = parsePrice(getValue(values, headers, "plan cost"));
                     double data = parseData(getValue(values, headers, "data"));
 
-                    // 收集特性
+                    // collect features
                     List<String> features = new ArrayList<>();
 
-                    // 检查 talk time 和 text time 是否包含 unlimited
+                    // check the string if it's contains the word -- unlimited
                     String talkTime = getValue(values, headers, "talk time");
                     String textTime = getValue(values, headers, "text time");
 
@@ -152,7 +153,7 @@ public class RecommendationTab extends JPanel {
                         features.add("Unlimited Text");
                     }
 
-                    // 检查其他特性
+                    // exam other features
                     String internationalCall = getValue(values, headers, "international call time");
                     String roaming = getValue(values, headers, "roaming");
                     String discount = getValue(values, headers, "discount");
@@ -164,69 +165,73 @@ public class RecommendationTab extends JPanel {
                         features.add("Roaming");
                     }
                     if (!discount.isEmpty()) {
-                        features.add("Automatic Payment Discount");
+                        features.add("Discount");
                     }
 
-                    // 创建并添加套餐
-                    System.out.println("\n处理套餐: " + name);
-                    System.out.println("价格: $" + price);
-                    System.out.println("数据: " + data + "GB");
-                    System.out.println("特性: " + features);
+                    // insert the plan
+                    System.out.println("\ndealing the package: " + name);
+                    System.out.println("Brand: " + brand);
+                    System.out.println("Price: $" + price);
+                    System.out.println("Data: " + data + "GB");
+                    System.out.println("Features: " + features);
 
-                    recommender.addPackage(new Package(name, data, price, features));
+                    recommender.addPackage(new Package(name,brand, data, price, features));
                     count++;
 
                 } catch (Exception e) {
-                    System.out.println("处理行时出错: " + line);
-                    System.out.println("错误信息: " + e.getMessage());
+                    System.out.println("error occur when dealing with the column: " + line);
+                    System.out.println("false info: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
 
-            System.out.println("\nCSV文件加载完成，成功加载 " + count + " 条记录");
+            System.out.println("\nFinish the loading of the csv file，success loading " + count + " records");
             recommender.printAllPackages();
 
         } catch (IOException e) {
-            System.out.println("加载CSV文件时出错:");
+            System.out.println("Error occurs when loading the csv file :");
             e.printStackTrace();
         }
     }
 
-    // 获取CSV中某一列的值，如果不存在或为空返回空字符串
+    //  get the value of a column from the given csv file, if it's "-" then return null
     private String getValue(List<String> values, Map<String, Integer> headers, String columnName) {
         Integer index = headers.get(columnName.toLowerCase());
         if (index != null && index < values.size()) {
             String value = values.get(index).trim();
-            // 去除引号
+            // remove quotation marks
             value = value.replaceAll("^\"|\"$", "");
             return value;
         }
         return "";
     }
-
+   // dealing with the price info
     private double parsePrice(String price) {
         if (price.isEmpty()) return 0.0;
 
-        System.out.println("正在解析价格: " + price);
+        System.out.println("analysing: " + price);
         try {
-            // 先找到 $ 后面的数字部分，再去掉 /mo. 部分
+            // find the number part first then remove the "/mo." part
             String[] parts = price.split("/");
             String numberPart = parts[0].replace("$", "").trim();
-            System.out.println("提取的数字部分: " + numberPart);
+            System.out.println("number part: " + numberPart);
             return Double.parseDouble(numberPart);
         } catch (Exception e) {
-            System.out.println("价格解析失败: " + price);
+            System.out.println("fail to analysis: " + price);
             return 0.0;
         }
     }
+    //dealing with the data info
     private double parseData(String data) {
         if (data == null || data.isEmpty() || data.toLowerCase().contains("no data")) {
             return 0.0;
+        }else if (data == "Unlimited"){
+            return Double.POSITIVE_INFINITY;
         }
 
-        System.out.println("正在解析数据量: " + data);
+        System.out.println("analysing: " + data);
         try {
-            // 使用正则表达式匹配数字后跟GB或MB的模式
+            // using regular expression to match the number with GB/MB
             Pattern pattern = Pattern.compile("(\\d+(?:\\.\\d+)?)[\\s]*(GB|MB)", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(data);
 
@@ -234,24 +239,24 @@ public class RecommendationTab extends JPanel {
                 double amount = Double.parseDouble(matcher.group(1));
                 String unit = matcher.group(2).toLowerCase();
 
-                // 如果是MB，转换为GB
+                // if it's MB,convert it to GB
                 if (unit.equals("mb")) {
                     amount = amount / 1024;
                 }
 
-                System.out.println("解析结果: " + amount + " GB");
+                System.out.println("The result of analysis: " + amount + " GB");
                 return amount;
             }
 
-            System.out.println("未找到有效的数据量表示，返回0");
+            System.out.println("can't find the valid data amount，return 0");
             return 0.0;
         } catch (Exception e) {
-            System.out.println("数据量解析失败: " + data);
+            System.out.println("fail to analysis data: " + data);
             return 0.0;
         }
     }
 
-    // 解析CSV行，处理引号内的逗号
+    //analysis a row from csv file
     private List<String> parseCSVLine(String line) {
         List<String> result = new ArrayList<>();
         boolean inQuotes = false;
@@ -282,13 +287,14 @@ public class RecommendationTab extends JPanel {
                     case "2" -> features.add("Unlimited Text");
                     case "3" -> features.add("International Calls");
                     case "4" -> features.add("Roaming");
-                    case "5" -> features.add("Automatic Payment Discount");
+                    case "5" -> features.add("Discount");
                 }
             }
         }
         return features;
     }
 
+    // validate the input
     private boolean validateInput(double budget, double data, String features) {
         if (budget <= 0 || data <= 0) {
             JOptionPane.showMessageDialog(this,
@@ -316,6 +322,7 @@ public class RecommendationTab extends JPanel {
         for (int i = 0; i < recommendations.size(); i++) {
             Package plan = recommendations.get(i);
             output.append(String.format("Recommendation #%d:\n", i + 1));
+            output.append(String.format("Brand: %s\n", plan.getBrand()));
             output.append(String.format("Plan: %s\n", plan.getName()));
             output.append(String.format("Data: %.1f GB\n", plan.getDataLimit()));
             output.append(String.format("Price: $%.2f/month\n", plan.getPrice()));

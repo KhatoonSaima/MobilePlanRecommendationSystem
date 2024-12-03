@@ -5,18 +5,21 @@ import java.util.List;
 //definition of a package(or plan)
 public class Package {
     private String name;
+    private String brand;
     private double dataLimit;
     private double price;
     private List<String> features;
 
-    public Package(String name, double dataLimit, double price, List<String> features) {
+    public Package(String name,String brand, double dataLimit, double price, List<String> features) {
         this.name = name;
+        this.brand = brand;
         this.dataLimit = dataLimit;
         this.price = price;
         this.features = features != null ? features : new ArrayList<>();
     }
     //getter
     public String getName() { return name; }
+    public String getBrand() { return brand; }
     public double getDataLimit() { return dataLimit; }
     public double getPrice() { return price; }
     public List<String> getFeatures() { return features; }

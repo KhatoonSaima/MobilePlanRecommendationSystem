@@ -33,7 +33,7 @@ public class PackageRecommender {
             if (topPackages.size() < TOP_K) {
                 topPackages.offer(new ScoredPackage(score, pkg));
             } else if (score > topPackages.peek().getScore()) {
-                topPackages.poll();
+                topPackages.poll(); // remove the one with the lowest score
                 topPackages.offer(new ScoredPackage(score, pkg));
             }
         }
@@ -85,17 +85,18 @@ public class PackageRecommender {
     // 添加此方法来打印所有套餐信息
     public void printAllPackages() {
         if (packages.isEmpty()) {
-            System.out.println("没有加载任何套餐数据！");
+            System.out.println("Didn't load anything！");
             return;
         }
 
-        System.out.println("当前已加载的所有套餐信息：");
-        System.out.println("总共加载了 " + packages.size() + " 个套餐");
+        System.out.println("Print the information of all plans：");
+        System.out.println("top to " + packages.size() + " plans");
         for (Package pkg : packages) {
-            System.out.println("\n套餐名称: " + pkg.getName());
-            System.out.println("数据流量: " + pkg.getDataLimit() + "GB");
-            System.out.println("价格: $" + pkg.getPrice());
-            System.out.println("特性: " + String.join(", ", pkg.getFeatures()));
+            System.out.println("\nBrand: " + pkg.getBrand());
+            System.out.println("Plan name: " + pkg.getName());
+            System.out.println("Data amount: " + pkg.getDataLimit() + "GB");
+            System.out.println("Price: $" + pkg.getPrice());
+            System.out.println("Features: " + String.join(", ", pkg.getFeatures()));
             System.out.println("------------------------");
         }
     }
