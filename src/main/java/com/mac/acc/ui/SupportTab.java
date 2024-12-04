@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+@author Saima Khatoon
+@since 25-11-2024
+ */
 public class SupportTab extends JPanel {
 
     public SupportTab() {

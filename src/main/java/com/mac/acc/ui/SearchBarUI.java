@@ -8,6 +8,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
+/*
+@author Saima Khatoon
+@since 25-11-2024
+ */
 public class SearchBarUI {
 
     public static JPanel createPanel() {
