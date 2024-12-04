@@ -5,6 +5,10 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 
+/*
+@author Saima Khatoon
+@since 25-11-2024
+ */
 public class HomeTab extends JPanel {
 
     public HomeTab() {
