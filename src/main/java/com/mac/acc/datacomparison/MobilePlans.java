@@ -32,8 +32,16 @@ public class MobilePlans {
 
     // Parse numeric data from the plan
     public double getDataLimit() {
-        String dataStr = plan.getOrDefault("Data", "0").replaceAll("[^0-9.]", ""); // Remove non-numeric characters
-        return dataStr.isEmpty() ? 0.0 : Double.parseDouble(dataStr);
+        //For GB. e.g, 50 GB will parse into 50.00
+        if(plan.getOrDefault("Data", "0").toLowerCase().contains("gb")) {  
+        	String dataStr = plan.getOrDefault("Data", "0").replaceAll("[^0-9.]", ""); // Remove non-numeric characters
+            return dataStr.isEmpty() ? 0.0 : Double.parseDouble(dataStr);
+        }
+        //For MB. e.g, 1000 MB will parse into 0.9765625
+        else{  
+        	String dataStr = plan.getOrDefault("Data", "0").replaceAll("[^0-9.]", "");
+        	return dataStr.isEmpty() ? 0.0 : Double.parseDouble(dataStr)*(1/1024);
+        }
     }
     
     
