@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/** @author Aoqing Liu
+ *  @since 2024-11-30
+ */
 public class RecommendationTab extends JPanel {
     private PackageRecommender recommender;
     private JTextArea outputArea;

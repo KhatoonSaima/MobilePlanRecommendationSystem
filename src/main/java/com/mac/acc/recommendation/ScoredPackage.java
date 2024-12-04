@@ -1,5 +1,7 @@
 package com.mac.acc.recommendation;
-
+/** @author Aoqing Liu
+ *  @since 2024-11-30
+ */
 // make sure it is designated type
 // put the score info into the packages
 public class ScoredPackage implements Comparable<ScoredPackage> {

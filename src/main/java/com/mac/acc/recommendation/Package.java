@@ -1,7 +1,10 @@
 package com.mac.acc.recommendation;
-
 import java.util.ArrayList;
 import java.util.List;
+
+/** @author Aoqing Liu
+ *  @since 2024-11-30
+ */
 //definition of a package(or plan)
 public class Package {
     private String name;

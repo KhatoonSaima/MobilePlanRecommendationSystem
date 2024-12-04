@@ -2,6 +2,9 @@ package com.mac.acc.ui;
 import javax.swing.*;
 import java.awt.*;
 
+/** @author Aoqing Liu
+ *  @since 2024-11-30
+ */
 public class MobilePlanRecommendationSystem {
 
     public static void main(String[] args) {

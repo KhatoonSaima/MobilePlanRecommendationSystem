@@ -1,5 +1,9 @@
 package com.mac.acc.recommendation;
 import java.util.List;
+
+/** @author Aoqing Liu
+ *  @since 2024-11-30
+ */
 //class of user's preferences, 3 main factors --data\price\other features
 public class UserPreferences {
     private double desiredData;

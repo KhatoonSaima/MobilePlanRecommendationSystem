@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.System.out;
+/** @author Aoqing Liu
+ *  @since 2024-11-30
+ */
 
 public class WordCompletion{
     //node class
