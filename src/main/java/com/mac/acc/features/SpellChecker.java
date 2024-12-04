@@ -1,3 +1,7 @@
+/**
+ * @author Tausif Zaman
+ * @since 2024-11-30
+ */
 package com.mac.acc.features;
 import java.io.*;
 import java.util.*;

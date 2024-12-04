@@ -1,3 +1,7 @@
+/**
+ * @author Tausif Zaman
+ * @since 2024-11-30
+ */
 package com.mac.acc.ui;
 
 import com.mac.acc.features.SearchBar;
