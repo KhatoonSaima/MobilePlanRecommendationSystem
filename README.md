@@ -67,10 +67,3 @@ The codebase follows a modular structure for clarity and ease of maintenance. Al
 ## 📌 Note
 
 Ensure you have **JDK 8 or higher** installed and configured in your system PATH.
-
----
-
-## 👩‍💻 Author
-
-- Saima Khatoon
-- Github: [@KhatoonSaima](https://github.com/KhatoonSaima)
