@@ -1,6 +1,8 @@
-# 📱 Mobile Plan Recommendation System
+# 📱 Mobile Plan Search & Recommendation System
 
 This is a **Java Swing-based desktop GUI application** that helps users find the best mobile plans based on their preferences. It includes multiple features such as **plan recommendation**, **spell checking**, **word completion**, **page ranking**, and a **customer support form** — all integrated into a clean, tabbed interface.
+
+![Alt Text](1.png)
 
 ---
 
