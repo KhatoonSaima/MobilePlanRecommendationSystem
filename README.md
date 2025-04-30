@@ -2,7 +2,7 @@
 
 This is a **Java Swing-based desktop GUI application** that helps users find the best mobile plans based on their preferences. It includes multiple features such as **plan recommendation**, **spell checking**, **word completion**, **page ranking**, and a **customer support form** — all integrated into a clean, tabbed interface.
 
-![Alt Text](3.png)
+![SearchBar-WordCompletion](assets/feature-wordCompletion.png)
 
 ---
 
@@ -30,7 +30,7 @@ The codebase follows a modular structure for clarity and ease of maintenance. Al
 | `FeaturesPanel.java` | Switches between word completion, spell check, and page ranking views    |
 | `SupportPanel.java`  | UI form for submitting user support/complaint requests                   |
 
-<img src="2.png" alt="PCOSCare Demo" width="400"/>
+<img src="assets/searchBar.png" alt="Serach Plan" width="400"/>
 ---
 
 ## 🧑‍💻 How to Run
