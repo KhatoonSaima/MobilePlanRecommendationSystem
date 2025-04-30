@@ -31,7 +31,6 @@ The codebase follows a modular structure for clarity and ease of maintenance. Al
 | `SupportPanel.java`  | UI form for submitting user support/complaint requests                   |
 
 <img src="assets/searchBar.png" alt="Serach Plan" width="400"/>
----
 
 ## 🧑‍💻 How to Run
 
